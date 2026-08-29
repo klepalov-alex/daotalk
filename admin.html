@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DaoTalk — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: #0d0f14; color: #e8eaf0;
+      min-height: 100vh; font-size: 14px; line-height: 1.6;
+    }
+
+    /* ── Password gate ── */
+    #gate {
+      position: fixed; inset: 0; background: #0d0f14;
+      display: flex; align-items: center; justify-content: center; z-index: 200;
+    }
+    .gate-box {
+      background: #13151c; border: 1px solid #1f2330; border-radius: 14px;
+      padding: 2.5rem 2.5rem; width: 340px; text-align: center;
+    }
+    .gate-logo {
+      font-family: "Noto Serif SC", serif; font-size: 1.5rem; font-weight: 700;
+      color: #e84343; margin-bottom: 0.25rem;
+    }
+    .gate-logo span { color: #e8eaf0; }
+    .gate-sub { color: #6b7280; font-size: 0.82rem; margin-bottom: 1.75rem; }
+    .gate-box input {
+      width: 100%; padding: 0.65rem 1rem; border-radius: 8px;
+      border: 1px solid #2a2a3a; background: #0d0f14; color: #e8eaf0;
+      font-size: 0.95rem; margin-bottom: 0.75rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .gate-box input:focus { border-color: #e84343; }
+    .gate-error { color: #e84343; font-size: 0.8rem; min-height: 1.2em; margin-bottom: 0.5rem; }
+
+    /* ── Main shell ── */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+    #app.visible { display: flex; }
+
+    header {
+      background: #13151c; border-bottom: 1px solid #1f2330;
+      padding: 0 2rem; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .admin-logo { font-family: "Noto Serif SC", serif; font-size: 1.1rem; font-weight: 700; }
+    .admin-logo em { color: #e84343; font-style: normal; }
+    .admin-badge {
+      background: rgba(232,67,67,0.1); border: 1px solid rgba(232,67,67,0.25);
+      color: #e84343; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 4px;
+    }
+    .logout-btn {
+      background: transparent; border: 1px solid #2a2a3a; color: #6b7280;
+      font-size: 0.78rem; padding: 0.3rem 0.8rem; border-radius: 6px; cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .logout-btn:hover { border-color: #e84343; color: #e84343; }
+
+    /* ── Tabs ── */
+    .tab-bar {
+      background: #13151c; border-bottom: 1px solid #1f2330;
+      display: flex; gap: 0; padding: 0 2rem;
+    }
+    .tab-btn {
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      color: #6b7280; font-size: 0.875rem; font-weight: 600;
+      padding: 0.85rem 1.25rem; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s; white-space: nowrap;
+    }
+    .tab-btn:hover { color: #e8eaf0; }
+    .tab-btn.active { color: #e8eaf0; border-bottom-color: #e84343; }
+
+    .tab-panel { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+    .tab-panel.active { display: block; }
+
+    /* ── Common UI ── */
+    .section-card {
+      background: #13151c; border: 1px solid #1f2330; border-radius: 12px;
+      padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #d4a017; margin-bottom: 1.25rem;
+    }
+    .field-group { margin-bottom: 1.1rem; }
+    .field-label { font-size: 0.78rem; color: #9ca3af; margin-bottom: 0.35rem; display: block; }
+    .field-help { display:flex; justify-content:space-between; gap:0.75rem; margin-top:0.25rem; color:#6b7280; font-size:0.7rem; }
+    .field-count { margin-left:auto; white-space:nowrap; }
+    textarea, input[type="text"], input[type="url"], input[type="password"], select {
+      width: 100%; padding: 0.6rem 0.85rem;
+      background: #0d0f14; border: 1px solid #2a2a3a; border-radius: 8px;
+      color: #e8eaf0; font-size: 0.875rem; font-family: inherit;
+      outline: none; transition: border-color 0.2s; resize: vertical;
+    }
+    textarea:focus, input:focus, select:focus { border-color: #e84343; }
+    textarea { min-height: 72px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.55rem 1.2rem; border-radius: 7px; font-size: 0.875rem;
+      font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-primary { background: #e84343; color: #fff; }
+    .btn-primary:hover { background: #c0392b; }
+    .btn-secondary { background: #1f2330; color: #e8eaf0; border: 1px solid #2a2a3a; }
+    .btn-secondary:hover { border-color: #4a4a5a; }
+    .btn-danger { background: rgba(232,67,67,0.12); color: #e84343; border: 1px solid rgba(232,67,67,0.25); }
+    .btn-danger:hover { background: rgba(232,67,67,0.22); }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.78rem; }
+    .btn-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 1.25rem; }
+
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      background: #1f2330; border: 1px solid #2a2a3a; border-radius: 8px;
+      padding: 0.65rem 1.4rem; font-size: 0.85rem; color: #e8eaf0;
+      pointer-events: none; opacity: 0; transition: opacity 0.3s;
+      z-index: 999; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+    .toast.ok { border-color: rgba(52,199,89,0.4); color: #34c759; }
+    .toast.err { border-color: rgba(232,67,67,0.4); color: #e84343; }
+
+    /* ── Lang toggle ── */
+    .lang-toggle { display: flex; gap: 0.15rem; background: #0d0f14; border: 1px solid #2a2a3a; border-radius: 7px; padding: 0.15rem; }
+    .lang-toggle-btn {
+      background: transparent; border: none; color: #6b7280;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 0.28rem 0.7rem; border-radius: 5px; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-toggle-btn.active { background: #e84343; color: #fff; }
+    .lang-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .lang-bar p { font-size: 0.8rem; color: #6b7280; }
+
+    /* ── Teacher list ── */
+    .teacher-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: #0d0f14; border: 1px solid #1f2330; border-radius: 10px;
+      padding: 0.9rem 1.1rem; margin-bottom: 0.75rem;
+    }
+    .teacher-avatar-sm {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, #c0392b, #d4a017);
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Noto Serif SC", serif; font-size: 1.1rem; color: #fff; flex-shrink: 0;
+    }
+    .teacher-item-info { flex: 1; min-width: 0; }
+    .teacher-item-name { font-weight: 600; font-size: 0.9rem; color: #e8eaf0; }
+    .teacher-item-meta { font-size: 0.78rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .teacher-item-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+    /* ── Teacher form ── */
+    #teacherFormWrap { display: none; }
+    #teacherFormWrap.open { display: block; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Image slots ── */
+    .image-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .image-slots { grid-template-columns: 1fr; } }
+    .image-slot {
+      background: #0d0f14; border: 1px solid #1f2330; border-radius: 10px;
+      padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .image-slot-label { font-size: 0.78rem; color: #d4a017; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .image-preview {
+      width: 100%; aspect-ratio: 16/9; border-radius: 7px;
+      background: #1f2330; overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .image-preview .svg-placeholder { font-size: 0.72rem; color: #4a4a5a; text-align: center; padding: 0.5rem; }
+    .image-slot input[type="file"] { display: none; }
+    .image-slot-btns { display: flex; gap: 0.5rem; }
+
+    /* ── Requests table ── */
+    .webhook-row { display: flex; gap: 0.75rem; align-items: flex-end; margin-bottom: 1.5rem; }
+    .webhook-row .field-group { flex: 1; margin-bottom: 0; }
+    .requests-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th {
+      background: #1f2330; color: #9ca3af; font-weight: 600;
+      text-align: left; padding: 0.55rem 0.85rem; white-space: nowrap;
+      border-bottom: 1px solid #2a2a3a;
+    }
+    td { padding: 0.55rem 0.85rem; border-bottom: 1px solid #1f2330; color: #e8eaf0; vertical-align: top; }
+    tr:hover td { background: #13151c; }
+    .empty-state { text-align: center; color: #4a4a5a; padding: 2.5rem 1rem; font-size: 0.85rem; }
+    .requests-meta { font-size: 0.78rem; color: #6b7280; margin-bottom: 0.75rem; }
+
+    /* ── Publish ── */
+    .publish-btn {
+      background: #e84343; color: #fff; border: none;
+      padding: 0.6rem 1.25rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em;
+      box-shadow: 0 3px 14px rgba(232,67,67,0.22);
+      transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+    .publish-btn:hover { background: #c0392b; transform: translateY(-1px); box-shadow: 0 5px 18px rgba(232,67,67,0.28); }
+    .publish-btn:disabled { opacity: 0.65; cursor: wait; transform: none; }
+    #publishModal {
+      position: fixed; inset: 0; z-index: 500; display: none;
+      align-items: center; justify-content: center; padding: 1rem;
+      background: rgba(5,7,10,0.8); backdrop-filter: blur(4px);
+    }
+    #publishModal.open { display: flex; }
+    .publish-box {
+      width: min(560px, 100%); background: #13151c; border: 1px solid #2a2a3a;
+      border-radius: 14px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+    .publish-box h3 { margin-bottom: 0.35rem; font-size: 1.1rem; }
+    .publish-box .muted { color: #6b7280; font-size: 0.8rem; margin-bottom: 1.1rem; }
+    .publish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .publish-grid .full { grid-column: 1 / -1; }
+    .publish-warning {
+      margin-top: 1rem; padding: 0.8rem 0.9rem; border-radius: 8px;
+      background: rgba(212,160,23,0.07); border: 1px solid rgba(212,160,23,0.18);
+      color: #9ca3af; font-size: 0.76rem; line-height: 1.6;
+    }
+    .publish-actions { display:flex; justify-content:flex-end; gap:0.65rem; margin-top:1.2rem; }
+    @media (max-width: 700px) {
+      header { padding: 0 1rem; }
+      .publish-btn { padding: 0.55rem 0.8rem; font-size: 0.8rem; }
+      .publish-grid { grid-template-columns: 1fr; }
+      .publish-grid .full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Password gate ── -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo"><em>道</em>DaoTalk <span style="font-size:0.75rem;color:#6b7280;font-weight:400">Admin</span></div>
+    <p class="gate-sub">Enter admin password to continue</p>
+    <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')tryLogin()" autofocus />
+    <p class="gate-error" id="gateError"></p>
+    <button class="btn btn-primary" style="width:100%" onclick="tryLogin()">Enter</button>
+  </div>
+</div>
+
+<!-- ── Main app ── -->
+<div id="app">
+  <header>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <span class="admin-logo"><em>道</em>DaoTalk</span>
+      <span class="admin-badge">Admin</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <button class="publish-btn" id="publishBtn" onclick="openPublishModal()">🚀 Опубликовать</button>
+      <button class="logout-btn" onclick="logout()">Log out</button>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('text',this)">✏️ Text</button>
+    <button class="tab-btn" onclick="switchTab('teachers',this)">👤 Teachers</button>
+    <button class="tab-btn" onclick="switchTab('images',this)">🖼 Images</button>
+    <button class="tab-btn" onclick="switchTab('requests',this)">📋 Requests</button>
+  </div>
+
+  <!-- ══ TAB: TEXT ══ -->
+  <div class="tab-panel active" id="tab-text">
+    <div class="lang-bar">
+      <div class="lang-toggle">
+        <button class="lang-toggle-btn active" id="tLangEN" onclick="switchTextLang('en',this)">EN</button>
+        <button class="lang-toggle-btn" id="tLangRU" onclick="switchTextLang('ru',this)">RU</button>
+      </div>
+      <p>Editing: <strong id="textLangLabel">English</strong></p>
+    </div>
+    <div id="textFields"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveText()">💾 Save all</button>
+      <button class="btn btn-secondary" onclick="resetText()">↩ Reset to defaults</button>
+    </div>
+  </div>
+
+  <!-- ══ TAB: TEACHERS ══ -->
+  <div class="tab-panel" id="tab-teachers">
+    <div class="section-card">
+      <div class="section-title">Teacher List</div>
+      <div id="teacherList"></div>
+      <button class="btn btn-primary" style="margin-top:0.5rem" onclick="openTeacherForm(null)">+ Add Teacher</button>
+    </div>
+
+    <div class="section-card" id="teacherFormWrap">
+      <div class="section-title" id="teacherFormTitle">Add Teacher</div>
+      <div class="form-grid-2">
+        <div class="field-group">
+          <label class="field-label">Avatar character (Chinese)</label>
+          <input type="text" id="tf_avatar" maxlength="2" data-count="true" placeholder="李" />
+          <div class="field-help"><span>Max 2 characters</span><span class="field-count" data-for="tf_avatar"></span></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Full name (EN)</label>
+          <input type="text" id="tf_name" maxlength="26" data-count="true" placeholder="Li Wei" />
+          <div class="field-help"><span>Max 26 characters</span><span class="field-count" data-for="tf_name"></span></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Origin (flag + city)</label>
+          <input type="text" id="tf_origin" maxlength="22" data-count="true" placeholder="🇨🇳 Beijing" />
+          <div class="field-help"><span>Max 22 characters</span><span class="field-count" data-for="tf_origin"></span></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">HSK certification</label>
+          <select id="tf_hsk">
+            <option>HSK 1</option><option>HSK 2</option><option>HSK 3</option>
+            <option>HSK 4</option><option>HSK 5</option><option value="HSK 6" selected>HSK 6</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Teaches (e.g. HSK 1–6)</label>
+          <input type="text" id="tf_teaches" maxlength="10" data-count="true" placeholder="HSK 1–6" />
+          <div class="field-help"><span>Max 10 characters</span><span class="field-count" data-for="tf_teaches"></span></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Native speaker</label>
+          <select id="tf_native">
+            <option value="1">Yes — Native</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Education (EN)</label>
+        <input type="text" id="tf_edu_en" maxlength="70" data-count="true" placeholder="M.A. in Chinese Linguistics, Beijing Normal University" />
+        <div class="field-help"><span>Max 70 characters</span><span class="field-count" data-for="tf_edu_en"></span></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Education (RU)</label>
+        <input type="text" id="tf_edu_ru" maxlength="70" data-count="true" placeholder="Магистратура по китайской лингвистике..." />
+        <div class="field-help"><span>Max 70 characters</span><span class="field-count" data-for="tf_edu_ru"></span></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Experience (EN)</label>
+        <input type="text" id="tf_exp_en" maxlength="60" data-count="true" placeholder="9 years teaching Mandarin online & offline" />
+        <div class="field-help"><span>Max 60 characters</span><span class="field-count" data-for="tf_exp_en"></span></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Experience (RU)</label>
+        <input type="text" id="tf_exp_ru" maxlength="60" data-count="true" placeholder="9 лет преподавания китайского онлайн и офлайн" />
+        <div class="field-help"><span>Max 60 characters</span><span class="field-count" data-for="tf_exp_ru"></span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveTeacher()">💾 Save teacher</button>
+        <button class="btn btn-secondary" onclick="cancelTeacherForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: IMAGES ══ -->
+  <div class="tab-panel" id="tab-images">
+    <div class="section-card">
+      <div class="section-title">Culture Slider Images</div>
+      <p style="font-size:0.82rem;color:#6b7280;margin-bottom:1.25rem">Upload a JPG, PNG or WebP to replace each illustration. Images are stored on the server and shown on the main page.</p>
+      <div class="image-slots" id="imageSlots"></div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: REQUESTS ══ -->
+  <div class="tab-panel" id="tab-requests">
+    <div class="section-card">
+      <div class="section-title">Requests</div>
+      <p style="font-size:0.82rem;color:#6b7280;margin-bottom:1rem">Заявки хранятся в MySQL на сервере.</p>
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem">
+        <button class="btn btn-primary" onclick="loadRequests()">↻ Обновить заявки</button>
+        <span class="requests-meta" id="requestsMeta"></span>
+      </div>
+      <div class="requests-table-wrap"><div id="requestsTable"><div class="empty-state">Нажмите «Обновить заявки».</div></div></div>
+    </div>
+  </div>
+
+  <div id="publishModal" aria-hidden="true">
+    <div class="publish-box" role="dialog" aria-modal="true" aria-labelledby="publishTitle">
+      <h3 id="publishTitle">Опубликовать изменения</h3>
+      <p class="muted">Сохранить изменения на сервере DaoTalk. После сохранения сайт сразу использует новые данные.</p>
+      <div id="publishStatus" class="publish-warning">Подготовка…</div>
+      <div class="publish-actions">
+        <button class="btn btn-secondary" onclick="closePublishModal()">Отмена</button>
+        <button class="btn btn-primary" id="confirmPublishBtn" onclick="publishAll()">💾 Сохранить и применить</button>
+      </div>
+    </div>
+  </div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────
+var PASS = 'daotalk2025';
+
+var DEFAULTS = {
+  en: {
+    hero_h1: 'Speak Chinese<br>with Confidence',
+    hero_p: 'DaoTalk connects you with certified teachers for live one-on-one and group lessons. From pinyin basics to HSK 6 — learn at your own pace, on your own schedule.',
+    why_h2: 'Why DaoTalk',
+    why_sub: 'The smarter way to learn Mandarin online — built around practice, not passive study.',
+    courses_h2: 'Choose Your Format',
+    courses_sub: 'Three lesson types designed for different learning goals and budgets.',
+    p1_title: '1-on-1 Lessons',
+    p1_desc: 'Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.',
+    p2_title: 'Small Group',
+    p2_desc: 'The sweet spot between personal attention and peer motivation. Practice with a study buddy at a lower cost.',
+    p3_title: 'Group Lessons',
+    p3_desc: 'A community classroom feel, online. Best for structured HSK-prep courses and themed cultural sessions.',
+    teachers_h2: 'Meet Our Teachers',
+    teachers_sub: 'Certified educators passionate about making Mandarin accessible to everyone.',
+    about_h2: 'Why Learn Chinese?',
+    about_sub: "One in five people on Earth speaks Mandarin. Here's why you should too.",
+    about_intro: "Mandarin is the language of <em>the world's largest economy</em> — and the most spoken language on Earth.",
+    about_body: "Chinese isn't just another language on your CV. It's a gateway to 5,000 years of philosophy, literature, and art — and to the fastest-growing business network in the world. Whether your goal is career advancement, travel, cultural curiosity, or connecting with family roots, Mandarin opens doors that no other language can."
+  },
+  ru: {
+    hero_h1: 'Говорите по-китайски<br>уверенно',
+    hero_p: 'DaoTalk подбирает вам сертифицированного преподавателя для живых занятий один на один или в группе. От основ пиньинь до HSK 6 — учитесь в своём темпе, в удобное время.',
+    why_h2: 'Почему DaoTalk',
+    why_sub: 'Умный способ учить китайский онлайн — через практику, а не пассивное изучение.',
+    courses_h2: 'Выберите формат',
+    courses_sub: 'Три типа занятий для разных целей и бюджетов.',
+    p1_title: 'Индивидуально',
+    p1_desc: 'Всё внимание — только вам. Преподаватель адаптирует каждую минуту урока под ваш темп и цели.',
+    p2_title: 'Мини-группа',
+    p2_desc: 'Идеальный баланс между вниманием преподавателя и мотивацией от партнёра по учёбе.',
+    p3_title: 'Группа',
+    p3_desc: 'Атмосфера класса онлайн. Лучший вариант для курсов подготовки к HSK и культурных тем.',
+    teachers_h2: 'Наши преподаватели',
+    teachers_sub: 'Сертифицированные педагоги, которые делают китайский доступным для каждого.',
+    about_h2: 'Зачем учить китайский?',
+    about_sub: 'Каждый пятый житель Земли говорит на мандаринском. Вот почему стоит присоединиться.',
+    about_intro: 'Мандаринский — язык <em>крупнейшей экономики мира</em> и самый распространённый родной язык на планете.',
+    about_body: 'Китайский — это не просто строчка в резюме. Это ключ к 5 000 лет философии, литературы и искусства — и к самой быстрорастущей деловой сети в мире. Будь то карьера, путешествия, культурный интерес или связь с семьёй — мандаринский открывает двери, которые не откроет ни один другой язык.'
+  }
+};
+
+var TEXT_SCHEMA = [
+  { section: 'Hero', fields: [
+    { key: 'hero_h1', label: 'Headline' },
+    { key: 'hero_p',  label: 'Subtext paragraph' }
+  ]},
+  { section: 'Why DaoTalk', fields: [
+    { key: 'why_h2',  label: 'Section heading' },
+    { key: 'why_sub', label: 'Section subheading' }
+  ]},
+  { section: 'Courses', fields: [
+    { key: 'courses_h2',  label: 'Section heading' },
+    { key: 'courses_sub', label: 'Section subheading' },
+    { key: 'p1_title',    label: '1-on-1 card title' },
+    { key: 'p1_desc',     label: '1-on-1 description' },
+    { key: 'p2_title',    label: 'Small Group card title' },
+    { key: 'p2_desc',     label: 'Small Group description' },
+    { key: 'p3_title',    label: 'Group Lessons card title' },
+    { key: 'p3_desc',     label: 'Group Lessons description' }
+  ]},
+  { section: 'Teachers', fields: [
+    { key: 'teachers_h2',  label: 'Section heading' },
+    { key: 'teachers_sub', label: 'Section subheading' }
+  ]},
+  { section: 'About — Why Learn Chinese', fields: [
+    { key: 'about_h2',    label: 'Section heading' },
+    { key: 'about_sub',   label: 'Section subheading' },
+    { key: 'about_intro', label: 'Intro sentence (HTML allowed)' },
+    { key: 'about_body',  label: 'Body paragraph' }
+  ]}
+];
+
+var DEFAULT_TEACHERS = [
+  { avatar:'李', name:'Li Wei', native:true, origin:'🇨🇳 Beijing', hsk:'HSK 6', teaches:'HSK 1–6',
+    edu_en:'M.A. in Chinese Linguistics, Beijing Normal University',
+    edu_ru:'Магистратура по китайской лингвистике, Пекинский педагогический университет',
+    exp_en:'9 years teaching Mandarin online & offline',
+    exp_ru:'9 лет преподавания китайского онлайн и офлайн' },
+  { avatar:'王', name:'Wang Fang', native:true, origin:'🇨🇳 Shanghai', hsk:'HSK 6', teaches:'HSK 4–6',
+    edu_en:'Ph.D. in Applied Linguistics, Peking University',
+    edu_ru:'Докторантура по прикладной лингвистике, Пекинский университет',
+    exp_en:'12 years · advanced fluency & business Chinese',
+    exp_ru:'12 лет · продвинутый уровень и деловой китайский' },
+  { avatar:'陈', name:'Chen Mingzhu', native:true, origin:'🇨🇳 Chengdu', hsk:'HSK 6', teaches:'HSK 1–5',
+    edu_en:'B.A. in Teaching Chinese as a Foreign Language, Fudan University',
+    edu_ru:'Бакалавр: преподавание китайского как иностранного, Университет Фудань',
+    exp_en:'6 years · business Chinese & HSK prep',
+    exp_ru:'6 лет · деловой китайский и подготовка к HSK' }
+];
+
+var IMAGE_LABELS = ['Great Wall · 长城', 'Lantern Festival · 元宵节', 'Tea Ceremony · 茶道', 'Calligraphy · 书法'];
+
+// ── State ──────────────────────────────────────────────────────────────────
+var textLang = 'en';
+var editingTeacherIdx = null; // null = new, number = edit existing
+
+// ── Auth ───────────────────────────────────────────────────────────────────
+async function tryLogin() {
+  var val=document.getElementById('pwInput').value, error=document.getElementById('gateError'); error.textContent='';
+  try{var r=await fetch('api/login.php',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({password:val})});var d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||'Login failed');document.getElementById('gate').style.display='none';document.getElementById('app').classList.add('visible');sessionStorage.setItem('dt_admin','1');init();}
+  catch(e){error.textContent=e.message||'Login failed.';document.getElementById('pwInput').value='';document.getElementById('pwInput').focus();}
+}
+async function logout(){try{await fetch('api/logout.php',{method:'POST',credentials:'same-origin'});}catch(e){}sessionStorage.removeItem('dt_admin');location.reload();}
+
+// ── Tab switching ──────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+var toastTimer;
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2500);
+}
+
+// ── TEXT TAB ───────────────────────────────────────────────────────────────
+function persistCurrentTextDraft() {
+  var obj = {};
+  document.querySelectorAll('#textFields textarea').forEach(function(ta) {
+    obj[ta.dataset.key] = ta.value;
+  });
+  localStorage.setItem('dt_strings_' + textLang, JSON.stringify(obj));
+}
+
+function switchTextLang(lang, btn) {
+  persistCurrentTextDraft();
+  textLang = lang;
+  document.querySelectorAll('.lang-toggle-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('textLangLabel').textContent = lang === 'en' ? 'English' : 'Russian';
+  renderTextFields();
+}
+
+function safeJson(raw, fallback) {
+  try { return JSON.parse(raw); } catch (e) { return fallback; }
+}
+
+function renderTextFields() {
+  var overrides = safeJson(localStorage.getItem('dt_strings_' + textLang) || '{}', {});
+  var defaults = DEFAULTS[textLang];
+  var html = '';
+  TEXT_SCHEMA.forEach(function(group) {
+    html += '<div class="section-card"><div class="section-title">' + group.section + '</div>';
+    group.fields.forEach(function(f) {
+      var val = (overrides[f.key] !== undefined) ? overrides[f.key] : defaults[f.key];
+      var rows = val.length > 120 ? 4 : 2;
+      html += '<div class="field-group">'
+            + '<label class="field-label">' + f.label + '</label>'
+            + '<textarea data-key="' + f.key + '" rows="' + rows + '">'
+            + escHtml(val)
+            + '</textarea></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('textFields').innerHTML = html;
+}
+
+function saveText() {
+  persistCurrentTextDraft();
+  toast('Text saved ✓', 'ok');
+}
+
+function resetText() {
+  if (!confirm('Reset ' + (textLang === 'en' ? 'English' : 'Russian') + ' text to defaults?')) return;
+  localStorage.removeItem('dt_strings_' + textLang);
+  renderTextFields();
+  toast('Reset to defaults', 'ok');
+}
+
+// ── TEACHERS TAB ──────────────────────────────────────────────────────────
+function getTeachers() {
+  var stored = safeJson(localStorage.getItem('dt_teachers') || 'null', null);
+  return Array.isArray(stored) ? stored : DEFAULT_TEACHERS.slice();
+}
+function saveTeachers(arr){localStorage.setItem('dt_teachers',JSON.stringify(arr));}
+async function apiJson(url,options){var r=await fetch(url,Object.assign({credentials:'same-origin'},options||{}));var d=await r.json().catch(function(){return{};});if(!r.ok)throw new Error(d.error||('Request failed ('+r.status+')'));return d;}
+async function loadTeachersFromServer(){var d=await apiJson('api/teachers.php');var t=Array.isArray(d.teachers)?d.teachers:[];if(!t.length){for(var i=0;i<DEFAULT_TEACHERS.length;i++){var seed=DEFAULT_TEACHERS[i];try{await apiJson('api/teachers.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(seed)});}catch(e){}}d=await apiJson('api/teachers.php');t=Array.isArray(d.teachers)?d.teachers:[];}saveTeachers(t);renderTeacherList();}
+
+function renderTeacherList() {
+  var teachers = getTeachers();
+  var html = '';
+  if (!teachers.length) {
+    html = '<p style="color:#6b7280;font-size:0.85rem;padding:0.5rem 0">No teachers yet.</p>';
+  }
+  teachers.forEach(function(t, i) {
+    html += '<div class="teacher-item">'
+          + '<div class="teacher-avatar-sm">' + escHtml(t.avatar) + '</div>'
+          + '<div class="teacher-item-info">'
+          + '<div class="teacher-item-name">' + escHtml(t.name) + (t.native ? ' <span style="color:#d4a017;font-size:0.72rem">Native</span>' : '') + '</div>'
+          + '<div class="teacher-item-meta">' + escHtml(t.origin) + ' · ' + escHtml(t.hsk) + ' · Teaches ' + escHtml(t.teaches) + '</div>'
+          + '</div>'
+          + '<div class="teacher-item-actions">'
+          + '<button class="btn btn-secondary btn-sm" onclick="openTeacherForm(' + i + ')">Edit</button>'
+          + '<button class="btn btn-danger btn-sm" onclick="deleteTeacher(' + i + ')">Delete</button>'
+          + '</div></div>';
+  });
+  document.getElementById('teacherList').innerHTML = html;
+}
+
+function openTeacherForm(idx) {
+  editingTeacherIdx = idx;
+  var teachers = getTeachers();
+  var t = (idx !== null) ? teachers[idx] : { avatar:'', name:'', native:true, origin:'', hsk:'HSK 6', teaches:'', edu_en:'', edu_ru:'', exp_en:'', exp_ru:'' };
+  document.getElementById('teacherFormTitle').textContent = (idx !== null) ? 'Edit Teacher' : 'Add Teacher';
+  document.getElementById('tf_avatar').value  = t.avatar;
+  document.getElementById('tf_name').value    = t.name;
+  document.getElementById('tf_origin').value  = t.origin;
+  document.getElementById('tf_hsk').value     = t.hsk;
+  document.getElementById('tf_teaches').value = t.teaches;
+  document.getElementById('tf_native').value  = t.native ? '1' : '0';
+  document.getElementById('tf_edu_en').value  = t.edu_en;
+  document.getElementById('tf_edu_ru').value  = t.edu_ru;
+  document.getElementById('tf_exp_en').value  = t.exp_en;
+  document.getElementById('tf_exp_ru').value  = t.exp_ru;
+  document.getElementById('teacherFormWrap').classList.add('open');
+  initTeacherCharCounters();
+  document.getElementById('teacherFormWrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function cancelTeacherForm() {
+  document.getElementById('teacherFormWrap').classList.remove('open');
+  editingTeacherIdx = null;
+}
+
+function initTeacherCharCounters() {
+  document.querySelectorAll('#teacherFormWrap input[data-count="true"]').forEach(function(input) {
+    var count = document.querySelector('.field-count[data-for="' + input.id + '"]');
+    if (!count) return;
+    var update = function() { count.textContent = input.value.length + '/' + input.maxLength; };
+    input.addEventListener('input', update);
+    update();
+  });
+}
+
+async function saveTeacher(){var t={avatar:document.getElementById('tf_avatar').value.trim(),name:document.getElementById('tf_name').value.trim(),origin:document.getElementById('tf_origin').value.trim(),hsk:document.getElementById('tf_hsk').value,teaches:document.getElementById('tf_teaches').value.trim(),native:document.getElementById('tf_native').value==='1',edu_en:document.getElementById('tf_edu_en').value.trim(),edu_ru:document.getElementById('tf_edu_ru').value.trim(),exp_en:document.getElementById('tf_exp_en').value.trim(),exp_ru:document.getElementById('tf_exp_ru').value.trim()};if(!t.name){toast('Name is required','err');return;}try{var ts=getTeachers();if(editingTeacherIdx!==null){t.id=ts[editingTeacherIdx].id;await apiJson('api/teachers.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)});}else{var d=await apiJson('api/teachers.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)});t.id=d.id;}await loadTeachersFromServer();cancelTeacherForm();toast('Teacher saved ✓','ok');}catch(e){toast(e.message||'Failed to save teacher','err');}}
+async function deleteTeacher(i){var t=getTeachers()[i];if(!t)return;if(!confirm('Delete '+t.name+'?'))return;try{if(t.id)await apiJson('api/teachers.php?id='+encodeURIComponent(t.id),{method:'DELETE'});await loadTeachersFromServer();toast('Teacher deleted','ok');}catch(e){toast(e.message||'Failed to delete teacher','err');}}
+
+function getImages(){var s=safeJson(localStorage.getItem('dt_images')||'{}',{});return s&&typeof s==='object'&&!Array.isArray(s)?s:{};}
+async function renderImageSlots(){var images={};try{var r=await fetch('api/public.php?v='+Date.now(),{cache:'no-store'});var d=await r.json();images=d.images||{};}catch(e){images=getImages();}localStorage.setItem('dt_images',JSON.stringify(images));var html='';IMAGE_LABELS.forEach(function(label,i){var src=images['slide'+i]||'';html+='<div class="image-slot"><div class="image-slot-label">'+label+'</div><div class="image-preview">'+(src?'<img src="'+escHtml(src)+'?v='+Date.now()+'" alt="'+escHtml(label)+'">':'<div class="svg-placeholder">SVG illustration<br>(original)</div>')+'</div><div class="image-slot-btns"><label class="btn btn-secondary btn-sm" style="cursor:pointer">Upload photo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadImage(event,'+i+')"></label>'+(src?'<button class="btn btn-danger btn-sm" onclick="removeImage('+i+')">Remove</button>':'')+'</div></div>';});document.getElementById('imageSlots').innerHTML=html;}
+async function uploadImage(e,i){var f=e.target.files[0];if(!f)return;if(f.size>5*1024*1024){toast('Image is larger than 5 MB','err');return;}var fd=new FormData();fd.append('index',i);fd.append('image',f);try{await apiJson('api/upload.php',{method:'POST',body:fd});await renderImageSlots();toast('Image saved ✓','ok');}catch(err){toast(err.message||'Upload failed','err');}}
+async function removeImage(i){var fd=new FormData();fd.append('index',i);try{await apiJson('api/remove_image.php',{method:'POST',body:fd});await renderImageSlots();toast('Reverted to original','ok');}catch(err){toast(err.message||'Remove failed','err');}}
+
+// ── REQUESTS TAB
+async function loadRequests(){var box=document.getElementById('requestsTable'),meta=document.getElementById('requestsMeta');box.innerHTML='<div class="empty-state">Loading…</div>';try{var d=await apiJson('api/requests.php');var rows=d.requests||[];meta.textContent=rows.length+' request'+(rows.length===1?'':'s');if(!rows.length){box.innerHTML='<div class="empty-state">No submissions yet.</div>';return;}var h='<table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Contact</th><th>Level</th><th>Format</th><th>Goal</th><th>Comment</th><th>Status</th></tr></thead><tbody>';rows.forEach(function(r){h+='<tr><td>'+escHtml(r.created_at||'')+'</td><td>'+escHtml(r.name||'')+'</td><td>'+escHtml(r.email||'')+'</td><td>'+escHtml(r.phone||'')+'</td><td>'+escHtml(r.contact||'')+'</td><td>'+escHtml(r.level||'')+'</td><td>'+escHtml(r.format||'')+'</td><td>'+escHtml(r.goal||'')+'</td><td>'+escHtml(r.comment||'')+'</td><td><select onchange="updateRequestStatus('+Number(r.id)+',this.value)">'+['new','contacted','trial','paid','lost'].map(function(s){return '<option value="'+s+'"'+(r.status===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select></td></tr>';});h+='</tbody></table>';box.innerHTML=h;}catch(e){box.innerHTML='<div class="empty-state" style="color:#e84343">'+escHtml(e.message||'Failed to load requests')+'</div>';meta.textContent='';}}
+async function updateRequestStatus(id,status){try{await apiJson('api/requests.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,status:status})});toast('Status updated ✓','ok');}catch(e){toast(e.message||'Failed to update status','err');}}
+async function loadContentFromServer(){try{var d=await apiJson('api/content.php');['en','ru'].forEach(function(l){localStorage.setItem('dt_strings_'+l,JSON.stringify((d.strings&&d.strings[l])||{}));});}catch(e){}}
+async function publishAll(){var modal=document.getElementById('publishModal'),status=document.getElementById('publishStatus'),btn=document.getElementById('confirmPublishBtn');modal.classList.add('open');modal.setAttribute('aria-hidden','false');btn.disabled=true;try{persistCurrentTextDraft();status.textContent='Сохраняю контент…';await apiJson('api/content.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({strings:{en:safeJson(localStorage.getItem('dt_strings_en')||'{}',{}),ru:safeJson(localStorage.getItem('dt_strings_ru')||'{}',{})}})});await loadTeachersFromServer();await renderImageSlots();status.textContent='Готово. Изменения сохранены на сервере.';toast('Опубликовано ✓','ok');document.getElementById('publishBtn').textContent='✓ Сохранено';setTimeout(function(){document.getElementById('publishBtn').textContent='🚀 Опубликовать';},2500);}catch(e){status.textContent='Ошибка: '+(e.message||'не удалось сохранить');toast(e.message||'Publish failed','err');}finally{btn.disabled=false;}}
+
+// ── Utils ──────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+async function init(){renderTextFields();renderTeacherList();await loadContentFromServer();renderTextFields();try{await loadTeachersFromServer();}catch(e){}try{await renderImageSlots();}catch(e){}}
+
+document.getElementById('publishModal').addEventListener('click', function(e) {
+  if (e.target === this) closePublishModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePublishModal();
+});
+
+// ── Boot: server session check ──
+(async function(){try{var r=await fetch('api/login.php',{credentials:'same-origin'});var d=await r.json();if(d.authenticated){document.getElementById('gate').style.display='none';document.getElementById('app').classList.add('visible');sessionStorage.setItem('dt_admin','1');init();}}catch(e){}})();
+</script>
+</body>
+</html>
