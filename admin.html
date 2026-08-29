@@ -572,13 +572,33 @@ function resetText() {
 }
 
 // ── TEACHERS TAB ──────────────────────────────────────────────────────────
-function getTeachers() {
-  var stored = safeJson(localStorage.getItem('dt_teachers') || 'null', null);
-  return Array.isArray(stored) ? stored : DEFAULT_TEACHERS.slice();
+var TEACHERS_CACHE = [];
+var savingTeacher = false;
+
+function getTeachers() { return Array.isArray(TEACHERS_CACHE) ? TEACHERS_CACHE.slice() : []; }
+function saveTeachers(arr){ TEACHERS_CACHE = Array.isArray(arr) ? arr.slice() : []; localStorage.setItem('dt_teachers', JSON.stringify(TEACHERS_CACHE)); }
+async function apiJson(url,options){
+  var opts = Object.assign({credentials:'same-origin', cache:'no-store'}, options || {});
+  var r = await fetch(url, opts);
+  var d = await r.json().catch(function(){return{};});
+  if(!r.ok) throw new Error(d.error || ('Request failed ('+r.status+')'));
+  return d;
 }
-function saveTeachers(arr){localStorage.setItem('dt_teachers',JSON.stringify(arr));}
-async function apiJson(url,options){var r=await fetch(url,Object.assign({credentials:'same-origin'},options||{}));var d=await r.json().catch(function(){return{};});if(!r.ok)throw new Error(d.error||('Request failed ('+r.status+')'));return d;}
-async function loadTeachersFromServer(){var d=await apiJson('api/teachers.php');var t=Array.isArray(d.teachers)?d.teachers:[];if(!t.length){for(var i=0;i<DEFAULT_TEACHERS.length;i++){var seed=DEFAULT_TEACHERS[i];try{await apiJson('api/teachers.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(seed)});}catch(e){}}d=await apiJson('api/teachers.php');t=Array.isArray(d.teachers)?d.teachers:[];}saveTeachers(t);renderTeacherList();}
+async function loadTeachersFromServer(){
+  var d = await apiJson('api/teachers.php?v='+Date.now());
+  var t = Array.isArray(d.teachers) ? d.teachers : [];
+  if(!t.length){
+    for(var i=0;i<DEFAULT_TEACHERS.length;i++){
+      var seed=DEFAULT_TEACHERS[i];
+      await apiJson('api/teachers.php?v='+Date.now(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(seed)});
+    }
+    d = await apiJson('api/teachers.php?v='+Date.now());
+    t = Array.isArray(d.teachers) ? d.teachers : [];
+  }
+  saveTeachers(t);
+  renderTeacherList();
+  return t;
+}
 
 function renderTeacherList() {
   var teachers = getTeachers();
@@ -636,7 +656,33 @@ function initTeacherCharCounters() {
   });
 }
 
-async function saveTeacher(){var t={avatar:document.getElementById('tf_avatar').value.trim(),name:document.getElementById('tf_name').value.trim(),origin:document.getElementById('tf_origin').value.trim(),hsk:document.getElementById('tf_hsk').value,teaches:document.getElementById('tf_teaches').value.trim(),native:document.getElementById('tf_native').value==='1',edu_en:document.getElementById('tf_edu_en').value.trim(),edu_ru:document.getElementById('tf_edu_ru').value.trim(),exp_en:document.getElementById('tf_exp_en').value.trim(),exp_ru:document.getElementById('tf_exp_ru').value.trim()};if(!t.name){toast('Name is required','err');return;}try{var ts=getTeachers();if(editingTeacherIdx!==null){t.id=ts[editingTeacherIdx].id;await apiJson('api/teachers.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)});}else{var d=await apiJson('api/teachers.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)});t.id=d.id;}await loadTeachersFromServer();cancelTeacherForm();toast('Teacher saved ✓','ok');}catch(e){toast(e.message||'Failed to save teacher','err');}}
+async function saveTeacher(){
+  if(savingTeacher) return;
+  var t={avatar:document.getElementById('tf_avatar').value.trim(),name:document.getElementById('tf_name').value.trim(),origin:document.getElementById('tf_origin').value.trim(),hsk:document.getElementById('tf_hsk').value,teaches:document.getElementById('tf_teaches').value.trim(),native:document.getElementById('tf_native').value==='1',edu_en:document.getElementById('tf_edu_en').value.trim(),edu_ru:document.getElementById('tf_edu_ru').value.trim(),exp_en:document.getElementById('tf_exp_en').value.trim(),exp_ru:document.getElementById('tf_exp_ru').value.trim()};
+  if(!t.name){toast('Name is required','err');return;}
+  var saveBtn=document.querySelector('#teacherFormWrap .btn-primary');
+  savingTeacher=true; if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving…';}
+  try{
+    var ts=getTeachers();
+    if(editingTeacherIdx!==null){
+      if(!ts[editingTeacherIdx] || !ts[editingTeacherIdx].id) throw new Error('Teacher record is out of date. Reloading list…');
+      t.id=ts[editingTeacherIdx].id;
+      await apiJson('api/teachers.php?v='+Date.now(),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)});
+    }else{
+      var d=await apiJson('api/teachers.php?v='+Date.now(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)});
+      t.id=d.id;
+    }
+    await loadTeachersFromServer();
+    cancelTeacherForm();
+    toast('Teacher saved ✓','ok');
+  }catch(e){
+    toast(e.message||'Failed to save teacher','err');
+    try{ await loadTeachersFromServer(); }catch(ignore){}
+  }finally{
+    savingTeacher=false;
+    if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='💾 Save teacher';}
+  }
+}
 async function deleteTeacher(i){var t=getTeachers()[i];if(!t)return;if(!confirm('Delete '+t.name+'?'))return;try{if(t.id)await apiJson('api/teachers.php?id='+encodeURIComponent(t.id),{method:'DELETE'});await loadTeachersFromServer();toast('Teacher deleted','ok');}catch(e){toast(e.message||'Failed to delete teacher','err');}}
 
 function getImages(){var s=safeJson(localStorage.getItem('dt_images')||'{}',{});return s&&typeof s==='object'&&!Array.isArray(s)?s:{};}
