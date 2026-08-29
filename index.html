@@ -9,6 +9,8 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
+
     body {
       font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
       background: #0d0f14;
@@ -73,7 +75,12 @@
     nav ul { list-style: none; display: flex; gap: 1.5rem; }
     nav ul a { text-decoration: none; color: #9ca3af; font-size: 0.88rem; transition: color 0.2s; white-space: nowrap; }
     nav ul a:hover { color: #e8eaf0; }
-    @media (max-width: 700px) { nav ul { display: none; } }
+    @media (max-width: 700px) {
+      nav ul { display: none; }
+      /* Mobile: show only the DaoTalk icon mark to keep the header compact. */
+      .logo { font-size: 0; letter-spacing: 0; }
+      .logo-char { margin-right: 0; font-size: 1.35rem; }
+    }
 
     .nav-btn {
       background: #e84343; color: #fff; border: none;
@@ -278,7 +285,8 @@
     @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr; } }
     .product-card {
       background: #13151c; border: 1px solid #1f2330; border-radius: 12px;
-      padding: 2rem 1.75rem; display: flex; flex-direction: column; gap: 1rem;
+      padding: 1.6rem 1.5rem; min-height: 430px; height: 100%; box-sizing: border-box;
+      display: flex; flex-direction: column; gap: 0.65rem;
       position: relative; overflow: hidden;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
       background-image:
@@ -315,10 +323,14 @@
     }
     .product-icon { font-size: 2rem; }
     .product-title { font-family: "Noto Serif SC", serif; font-size: 1.15rem; font-weight: 700; color: #e8eaf0; }
-    .product-capacity { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: #d4a017; font-weight: 600; letter-spacing: 0.04em; }
-    .product-desc { font-size: 0.875rem; color: #9ca3af; line-height: 1.65; min-height: 5.5rem; }
-    .product-perks { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; margin-top: auto; }
-    .product-perks li { font-size: 0.83rem; color: #9ca3af; display: flex; align-items: flex-start; gap: 0.5rem; }
+    .product-capacity { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: #d4a017; font-weight: 600; letter-spacing: 0.04em; }
+
+    .product-price { font-family: "Noto Serif SC", serif; font-size: 1.15rem; font-weight: 700; color: #e8eaf0; line-height: 1.2; margin-top: 0.15rem; }
+    .product-price-sub { color: #9ca3af; font-size: 0.72rem; line-height: 1.35; margin-top: -0.2rem; min-height: 2.4rem; }
+    .product-price-sub strong { color: #d4a017; font-weight: 700; }
+    .product-desc { font-size: 0.86rem; color: #9ca3af; line-height: 1.55; min-height: 4.8rem; margin: 0.15rem 0 0.1rem; }
+    .product-perks { list-style: none; display: flex; flex-direction: column; gap: 0.32rem; margin-top: auto; }
+    .product-perks li { font-size: 0.8rem; color: #9ca3af; display: flex; align-items: flex-start; gap: 0.5rem; }
     .product-perks li::before { content: "✦"; color: #e84343; font-size: 0.65rem; margin-top: 0.2rem; flex-shrink: 0; }
 
     /* ── Teachers — horizontal drag-to-scroll carousel ── */
@@ -344,14 +356,14 @@
 
     .teacher-card {
       background: #13151c; border: 1px solid #2a1a1a; border-radius: 14px;
-      padding: 2rem 1.75rem; width: 300px; height: 670px; flex-shrink: 0;
+      padding: 1.7rem 1.5rem; width: 300px; height: 650px; flex-shrink: 0;
       align-self: stretch; display: flex; flex-direction: column;
       position: relative; overflow: hidden;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
       background-image: linear-gradient(145deg, #151820 0%, #13151c 60%, #160e0e 100%);
     }
     @media (max-width: 700px) {
-      .teacher-card { height: 670px; }
+      .teacher-card { height: 650px; }
     }
     .teacher-card:hover { transform: translateY(-4px); border-color: #5a2a1a; box-shadow: 0 8px 32px rgba(232,67,67,0.12); }
     .teacher-card::after {
@@ -372,7 +384,7 @@
        regardless of how tall the avatar/name/hsk area is */
     .teacher-card-inner {
       position: relative; z-index: 1;
-      display: flex; flex-direction: column; height: 100%;
+      display: flex; flex-direction: column; height: 100%; min-height: 0; overflow: hidden;
     }
 
     .teacher-avatar {
@@ -380,16 +392,16 @@
       background: linear-gradient(135deg, #c0392b, #d4a017);
       display: flex; align-items: center; justify-content: center;
       font-family: "Ma Shan Zheng", "Noto Serif SC", serif;
-      font-size: 1.7rem; font-weight: 700; color: #fff; margin-bottom: 1rem;
+      font-size: 1.7rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;
       box-shadow: 0 0 0 2px rgba(212,160,23,0.35), 0 0 0 4px rgba(212,160,23,0.1);
       flex-shrink: 0;
     }
     /* fixed min-height absorbs the difference between 1-line and 2-line names */
-    .teacher-header { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.75rem; flex-shrink: 0; height: 3.6rem; min-height: 3.6rem; }
+    .teacher-header { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.75rem; flex-shrink: 0; height: 3.25rem; min-height: 3.25rem; }
     .teacher-name { font-family: "Noto Serif SC", serif; font-size: 1.1rem; font-weight: 700; color: #e8eaf0; line-height: 1.35; }
     .teacher-origin { font-size: 0.78rem; color: #6b7280; letter-spacing: 0.03em; }
 
-    .teacher-own-hsk { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-shrink: 0; height: 2rem; min-height: 2rem; }
+    .teacher-own-hsk { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.55rem; flex-shrink: 0; height: 1.85rem; min-height: 1.85rem; }
     .own-hsk-label { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; }
     .own-hsk-badge {
       background: linear-gradient(135deg, #d4a017, #e8c55a); color: #13151c;
@@ -408,9 +420,9 @@
        this is the fixed alignment point: all cards' "Education" rows
        sit just below this line */
     .teacher-meta {
-      display: flex; flex-direction: column; gap: 0.75rem;
+      display: flex; flex-direction: column; gap: 0.48rem;
       border-top: 1px solid #1f2330;
-      padding-top: 1rem; margin-top: 0;
+      padding-top: 0.7rem; margin-top: 0;
       flex: 0 0 auto;
     }
     .teacher-meta-item {
@@ -418,28 +430,19 @@
       grid-template-columns: 92px 1fr;
       column-gap: 0.85rem;
       align-items: start;
-      font-size: 0.845rem;
-      overflow: hidden;
+      font-size: 0.8rem;
+      overflow: visible;
     }
-    /* Fixed metadata rows keep all cards aligned horizontally. */
-    .teacher-meta-item:first-child { height: 7.5rem; min-height: 7.5rem; }
-    .teacher-meta-item:nth-child(2) { height: 2.75rem; min-height: 2.75rem; }
-    .teacher-meta-item:last-child { height: 4.4rem; min-height: 4.4rem; }
-    .teacher-meta-item:first-child .meta-value,
-    .teacher-meta-item:last-child .meta-value {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .teacher-meta-item:first-child .meta-value { -webkit-line-clamp: 4; }
-    .teacher-meta-item:last-child .meta-value { -webkit-line-clamp: 3; }
+    /* Compact metadata rows; long education/experience text remains fully visible. */
+    .teacher-meta-item { min-height: 0; }
+    .teacher-meta-item .meta-value { overflow-wrap: anywhere; }
     .meta-label {
       color: #d4a017; font-size: 0.68rem; font-weight: 600;
       letter-spacing: 0.04em; text-transform: uppercase;
       word-break: break-word; padding-top: 0.1rem; line-height: 1.35;
     }
     /* nudge values toward the right edge of the card */
-    .meta-value { color: #9ca3af; line-height: 1.5; padding-left: 0.25rem; }
+    .meta-value { color: #9ca3af; line-height: 1.35; padding-left: 0.15rem; }
 
     .hsk-badge {
       display: inline-block;
@@ -490,16 +493,20 @@
 
     /* ── Culture image slider ── */
     .culture-slider {
-      position: relative; border-radius: 12px; overflow: hidden;
+      position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
       border: 1px solid #1f2330; background: #0d0f14;
     }
     .culture-slider-track {
-      display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      display: flex; width: 100%; height: 100%;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
     }
     .culture-slide {
-      min-width: 100%; position: relative; aspect-ratio: 16/9; flex-shrink: 0;
+      min-width: 100%; width: 100%; height: 100%; position: relative;
+      flex: 0 0 100%; overflow: hidden;
     }
-    .culture-slide svg { width: 100%; height: 100%; display: block; }
+    .culture-slide svg, .culture-slide img {
+      width: 100%; height: 100%; display: block; object-fit: cover;
+    }
     .culture-slide-label {
       position: absolute; bottom: 0; left: 0; right: 0;
       padding: 0.5rem 0.85rem;
@@ -577,12 +584,14 @@
     .form-submit:hover { background: #c0392b; }
 
     /* ── Success ── */
-    .form-success { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding: 2rem 0 1rem; }
+    .comment-counter { text-align: right; color: #4b5563; font-size: 0.7rem; line-height: 1.2; margin-top: -0.35rem; }
+
+    .form-success { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.8rem; padding: 2.5rem 1rem 2rem; margin: 0 auto; width: 100%; box-sizing: border-box; }
     .form-success.visible { display: flex; }
     .success-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(232,67,67,0.1); border: 2px solid rgba(232,67,67,0.4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #e84343; }
     .success-char { font-family: "Noto Serif SC", serif; font-size: 2.2rem; color: #d4a017; letter-spacing: 0.15em; }
     .success-title { font-family: "Noto Serif SC", serif; font-size: 1.3rem; font-weight: 700; color: #e8eaf0; }
-    .success-sub { color: #9ca3af; font-size: 0.9rem; line-height: 1.65; max-width: 340px; }
+    .success-sub { color: #9ca3af; font-size: 0.9rem; line-height: 1.6; max-width: 420px; margin: 0 auto; }
 
     /* ── Footer ── */
     footer {
@@ -614,17 +623,17 @@
   <nav>
     <div class="logo"><span class="logo-char">道</span>Dao<span>Talk</span></div>
     <ul>
-      <li><a href="#about" data-i18n="nav_about">About</a></li>
-      <li><a href="#why" data-i18n="nav_why">Why Us</a></li>
-      <li><a href="#courses" data-i18n="nav_courses">Courses</a></li>
-      <li><a href="#teachers" data-i18n="nav_teachers">Teachers</a></li>
+      <li><a href="#about" onclick="smoothTo('about'); return false;" data-i18n="nav_about">About</a></li>
+      <li><a href="#why" onclick="smoothTo('why'); return false;" data-i18n="nav_why">Why Us</a></li>
+      <li><a href="#courses" onclick="smoothTo('courses'); return false;" data-i18n="nav_courses">Courses</a></li>
+      <li><a href="#teachers" onclick="smoothTo('teachers'); return false;" data-i18n="nav_teachers">Teachers</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:0.75rem;">
       <div class="lang-switch">
         <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
         <button class="lang-btn" id="btnRU" onclick="setLang('ru')">RU</button>
       </div>
-      <button class="nav-btn" onclick="document.getElementById('start').scrollIntoView({behavior:'smooth'})" data-i18n="nav_cta">Start Learning</button>
+      <button class="nav-btn" onclick="smoothTo('start')" data-i18n="nav_cta">Start Learning</button>
     </div>
   </nav>
 
@@ -638,8 +647,8 @@
     <h1 data-i18n="hero_h1">Speak Chinese<br>with Confidence</h1>
     <p data-i18n="hero_p">DaoTalk connects you with certified teachers for live one-on-one and group lessons. From pinyin basics to HSK 6 — learn at your own pace, on your own schedule.</p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="document.getElementById('start').scrollIntoView({behavior:'smooth'})" data-i18n="nav_cta">Start Learning</button>
-      <button class="btn-outline" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})" data-i18n="hero_courses_btn">View Courses</button>
+      <button class="btn-primary" onclick="smoothTo('start')" data-i18n="nav_cta">Start Learning</button>
+      <button class="btn-outline" onclick="smoothTo('courses')" data-i18n="hero_courses_btn">View Courses</button>
     </div>
   </section>
 
@@ -691,6 +700,8 @@
           <div class="product-icon">👤</div>
           <div class="product-title" data-i18n="p1_title">1-on-1 Lessons</div>
           <div class="product-capacity" data-i18n="p1_cap">● 1 student · private</div>
+          <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+          <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           <p class="product-desc" data-i18n="p1_desc">Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.</p>
           <ul class="product-perks">
             <li data-i18n="p1_b1">Fully personalised lesson plan</li>
@@ -705,6 +716,8 @@
           <div class="product-icon">👥</div>
           <div class="product-title" data-i18n="p2_title">Small Group</div>
           <div class="product-capacity" data-i18n="p2_cap">● 2–3 students · semi-private</div>
+          <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+          <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           <p class="product-desc" data-i18n="p2_desc">The sweet spot between personal attention and peer motivation. Practice with a study buddy at a lower cost.</p>
           <ul class="product-perks">
             <li data-i18n="p2_b1">Peer conversation practice built in</li>
@@ -718,6 +731,8 @@
           <div class="product-icon">👨‍👩‍👧‍👦</div>
           <div class="product-title" data-i18n="p3_title">Group Lessons</div>
           <div class="product-capacity" data-i18n="p3_cap">● up to 5 students · group</div>
+          <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+          <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           <p class="product-desc" data-i18n="p3_desc">A community classroom feel, online. Best for structured HSK-prep courses and themed cultural sessions.</p>
           <ul class="product-perks">
             <li data-i18n="p3_b1">Fixed weekly schedule — great for routine</li>
@@ -1058,7 +1073,7 @@
             </div>
             <div class="form-group">
               <label for="comment" data-i18n="f_comment">Comment (optional)</label>
-              <textarea id="comment" rows="3" placeholder="Any questions, requests, or things we should know…" data-i18n-ph="f_comment_ph"></textarea>
+              <textarea id="comment" rows="3" maxlength="150" placeholder="Any questions, requests, or things we should know…" data-i18n-ph="f_comment_ph" aria-describedby="commentCounter"></textarea><div class="comment-counter" id="commentCounter">0 / 150</div>
             </div>
             <button type="submit" class="form-submit" data-i18n="f_submit">Send My Request →</button>
           </form>
@@ -1086,18 +1101,76 @@
     // strings are merged on top of this dictionary below.
     var STRINGS = {
       en: {
-        native_badge: 'Native',
-        hsk_cert: 'HSK certified',
-        meta_edu: 'Education',
-        meta_teaches: 'Teaches',
-        meta_exp: 'Experience'
+        nav_about:'About', nav_why:'Why Us', nav_courses:'Courses', nav_teachers:'Teachers', nav_cta:'Start Learning',
+        hero_badge:'✦ Online Mandarin School', hero_h1:'Speak Chinese<br>with Confidence',
+        hero_p:'DaoTalk connects you with certified teachers for live one-on-one and group lessons. From pinyin basics to HSK 6 — learn at your own pace, on your own schedule.', hero_courses_btn:'View Courses',
+        why_h2:'Why DaoTalk', why_sub:'The smarter way to learn Mandarin online — built around practice, not passive study.',
+        wc1_h:'HSK-Aligned Curriculum', wc1_p:'Lessons mapped to all six HSK levels so you always know where you stand.',
+        wc2_h:'Speaking from Day One', wc2_p:'Every lesson includes live speaking drills. No grammar lectures without practice.',
+        wc3_h:'Cultural Context', wc3_p:'Understand idioms, tone, and culture — not just vocabulary lists.',
+        wc4_h:'Flexible Scheduling', wc4_p:'Book sessions any day, any time zone — mornings, evenings, or weekends.',
+        wc5_h:'Learn Anywhere', wc5_p:'All you need is a browser. No app downloads, no commute, no wasted time.',
+        wc6_h:'Session Recordings', wc6_p:'Every lesson is recorded so you can revisit explanations at your own pace.',
+        wc7_h:'Progress Tracking', wc7_p:'Visual dashboards show your HSK progress, speaking hours, and vocabulary growth.',
+        wc8_h:'Real Conversation Practice', wc8_p:'Roleplay scenarios, debates, and storytelling — not just Q&A drills.',
+        wc9_h:'Character Writing', wc9_p:'Optional calligraphy and stroke-order sessions for those who want to write by hand.',
+        courses_h2:'Choose Your Format', courses_sub:'Three lesson types designed for different learning goals and budgets.',
+        p1_title:'1-on-1 Lessons', p1_cap:'● 1 student · private', p_price:'$35 / 50 min', p_packages:'Discounted packages available', p1_desc:'Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.',
+        p1_b1:'Fully personalised lesson plan', p1_b2:'Fastest progress — no waiting for others', p1_b3:'Direct feedback on pronunciation and tones', p1_b4:'Reschedule anytime with 12 h notice',
+        popular_badge:'Popular', p2_title:'Small Group', p2_cap:'● 2–3 students · semi-private', p2_desc:'The sweet spot between personal attention and peer motivation. Practice with a study buddy at a lower cost.',
+        p2_b1:'Peer conversation practice built in', p2_b2:"Teacher still knows every student's level", p2_b3:'More affordable than private lessons', p2_b4:'Great for couples or friends learning together',
+        p3_title:'Group Lessons', p3_cap:'● up to 5 students · group', p3_desc:'A community classroom feel, online. Best for structured HSK-prep courses and themed cultural sessions.',
+        p3_b1:'Fixed weekly schedule — great for routine', p3_b2:'Most affordable option per session', p3_b3:'Diverse discussion with multiple learners', p3_b4:'Ideal for beginners building confidence',
+        teachers_h2:'Meet Our Teachers', teachers_sub:'Certified educators passionate about making Mandarin accessible to everyone.', scroll_hint:'← drag to see more teachers →',
+        native_badge:'Native', hsk_cert:'HSK certified', meta_edu:'Education', meta_teaches:'Teaches', meta_exp:'Experience',
+        about_h2:'Why Learn Chinese?', about_sub:"One in five people on Earth speaks Mandarin. Here's why you should too.",
+        about_intro:"Mandarin is the language of <em>the world's largest economy</em> — and the most spoken language on Earth.",
+        about_body:"Chinese isn't just another language on your CV. It's a gateway to 5,000 years of philosophy, literature, and art — and to the fastest-growing business network in the world. Whether your goal is career advancement, travel, cultural curiosity, or connecting with family roots, Mandarin opens doors that no other language can.",
+        ab1:'Over 1.4 billion native speakers — the most spoken mother tongue globally', ab2:"China is the world's largest trading partner for over 120 countries", ab3:'HSK certification is recognised by universities and employers worldwide', ab4:'Learning characters strengthens memory, focus, and cognitive flexibility', ab5:'Unlock film, music, literature, and humour that never survives translation',
+        stat1:'Native speakers', stat2:'World economy', stat3:'Characters for fluency', stat4:'To reach HSK 3',
+        cf1:'Great Wall · 长城', cf2:'Lantern Festival · 元宵节', cf3:'Tea Ceremony · 茶道', cf4:'Calligraphy · 书法',
+        form_h2:'Start Learning Today', form_sub:"Fill in the form and we'll match you with the right teacher and format within 24 hours.",
+        f_name:'First Name', f_name_ph:'Your name', f_email:'Email', f_phone:'Phone / Messenger number', f_phone_ph:'+1 234 567 8900', f_contact:'Preferred contact', f_call_opt:'📞 Call', f_email_opt:'✉️ Email',
+        f_level:'Current Level', f_level_ph:'Select level', f_beginner:'Complete beginner', f_format:'Preferred Format', f_format_ph:'Select format', f_11:'1-on-1 Private', f_small:'Small Group (2–3)', f_group:'Group (up to 5)',
+        f_goal:'Learning Goal', f_goal_ph:'What do you want to achieve?', g1:'Pass HSK exam', g2:'Business / professional Chinese', g3:'Everyday conversation', g4:'Travel to China', g5:'Cultural interest', g6:'Connect with family / heritage',
+        f_comment:'Comment (optional)', f_comment_ph:'Any questions, requests, or things we should know…', f_submit:'Send My Request →', success_title:"We've got your request!", success_sub:"Thank you! We'll review your details and reach out within 24 hours to set up your free trial lesson.", footer_text:'© 2025 DaoTalk — Online Chinese Language School',
+        comment_count:'%n% / 150'
       },
       ru: {
-        native_badge: 'Носитель языка',
-        hsk_cert: 'Сертификат HSK',
-        meta_edu: 'Образование',
-        meta_teaches: 'Преподаёт',
-        meta_exp: 'Опыт'
+        nav_about:'О нас', nav_why:'Почему мы', nav_courses:'Форматы', nav_teachers:'Преподаватели', nav_cta:'Начать обучение',
+        hero_badge:'✦ Онлайн-школа китайского языка', hero_h1:'Говорите по-китайски<br>уверенно',
+        hero_p:'DaoTalk соединяет вас с сертифицированными преподавателями для индивидуальных и групповых занятий. От основ пиньиня до HSK 6 — учитесь в своём темпе и по удобному расписанию.', hero_courses_btn:'Форматы занятий',
+        why_h2:'Почему DaoTalk', why_sub:'Умный способ учить китайский онлайн — с упором на практику, а не пассивное обучение.',
+        wc1_h:'Программа по уровням HSK', wc1_p:'Занятия соответствуют всем шести уровням HSK, поэтому вы всегда понимаете свой прогресс.',
+        wc2_h:'Разговорная практика с первого дня', wc2_p:'На каждом занятии есть живая разговорная практика. Никаких лекций без применения.',
+        wc3_h:'Культурный контекст', wc3_p:'Понимайте идиомы, интонации и культуру, а не только списки слов.',
+        wc4_h:'Гибкое расписание', wc4_p:'Бронируйте занятия в любой день и часовом поясе — утром, вечером или в выходные.',
+        wc5_h:'Учитесь где угодно', wc5_p:'Нужен только браузер. Без приложений, дороги и лишних потерь времени.',
+        wc6_h:'Записи занятий', wc6_p:'Каждый урок записывается, чтобы вы могли повторить объяснения в удобном темпе.',
+        wc7_h:'Отслеживание прогресса', wc7_p:'Наглядные показатели показывают ваш прогресс по HSK, часы разговорной практики и рост словарного запаса.',
+        wc8_h:'Живая разговорная практика', wc8_p:'Ролевые сценарии, дебаты и рассказы — а не только упражнения в формате вопросов и ответов.',
+        wc9_h:'Иероглифы и письмо', wc9_p:'Дополнительные занятия по каллиграфии и порядку черт для тех, кто хочет писать от руки.',
+        courses_h2:'Выберите формат', courses_sub:'Три формата занятий для разных целей и бюджета.',
+        p1_title:'Индивидуальные занятия', p1_cap:'● 1 ученик · индивидуально', p_price:'$35 / 50 минут', p_packages:'Доступны пакеты со скидкой', p1_desc:'Полное внимание вам. Преподаватель адаптирует каждую минуту урока под ваш темп, цели и слабые места.',
+        p1_b1:'Полностью индивидуальный план', p1_b2:'Максимально быстрый прогресс — без ожидания других', p1_b3:'Прямая обратная связь по произношению и тонам', p1_b4:'Перенос занятия при уведомлении за 12 часов',
+        popular_badge:'Популярно', p2_title:'Мини-группа', p2_cap:'● 2–3 ученика · полуиндивидуально', p2_desc:'Баланс личного внимания и мотивации от группы. Практика с партнёром по обучению по более доступной цене.',
+        p2_b1:'Разговорная практика с другими учениками', p2_b2:'Преподаватель знает уровень каждого участника', p2_b3:'Доступнее индивидуальных занятий', p2_b4:'Подходит для пар или друзей',
+        p3_title:'Групповые занятия', p3_cap:'● до 5 учеников · группа', p3_desc:'Атмосфера общего класса, но онлайн. Подходит для структурированной подготовки к HSK и тематических культурных занятий.',
+        p3_b1:'Фиксированный еженедельный график', p3_b2:'Самая низкая стоимость за занятие', p3_b3:'Разнообразное общение с несколькими учениками', p3_b4:'Идеально для начинающих',
+        teachers_h2:'Наши преподаватели', teachers_sub:'Сертифицированные преподаватели, которые помогают сделать китайский доступным каждому.', scroll_hint:'← потяните, чтобы увидеть других преподавателей →',
+        native_badge:'Носитель языка', hsk_cert:'Сертификат HSK', meta_edu:'Образование', meta_teaches:'Преподаёт', meta_exp:'Опыт',
+        about_h2:'Зачем учить китайский?', about_sub:'Каждый пятый человек на Земле говорит на китайском. Вот почему стоит говорить и вам.',
+        about_intro:'Китайский — язык <em>крупнейшей экономики мира</em> и самый распространённый родной язык на планете.',
+        about_body:'Китайский — это не просто ещё одна строка в резюме. Это путь к 5000 годам философии, литературы и искусства, а также к одной из важнейших деловых сред мира. Карьера, путешествия, интерес к культуре или связь с семьёй — китайский открывает возможности, которые трудно заменить другим языком.',
+        ab1:'Более 1,4 млрд носителей — самый распространённый родной язык в мире', ab2:'Китай — крупнейший торговый партнёр более чем для 120 стран', ab3:'Сертификат HSK признаётся университетами и работодателями по всему миру', ab4:'Изучение иероглифов развивает память, внимание и когнитивную гибкость', ab5:'Открывает доступ к кино, музыке, литературе и юмору, которые теряются при переводе',
+        stat1:'Носителей языка', stat2:'Мировая экономика', stat3:'Иероглифов для беглости', stat4:'До уровня HSK 3',
+        cf1:'Великая стена · 长城', cf2:'Праздник фонарей · 元宵节', cf3:'Чайная церемония · 茶道', cf4:'Каллиграфия · 书法',
+        form_h2:'Начните обучение сегодня', form_sub:'Заполните форму, и мы подберём подходящего преподавателя и формат в течение 24 часов.',
+        f_name:'Имя', f_name_ph:'Ваше имя', f_email:'Email', f_phone:'Телефон / мессенджер', f_phone_ph:'+7 700 123 45 67', f_contact:'Предпочтительный способ связи', f_call_opt:'📞 Звонок', f_email_opt:'✉️ Email',
+        f_level:'Текущий уровень', f_level_ph:'Выберите уровень', f_beginner:'Полный новичок', f_format:'Предпочтительный формат', f_format_ph:'Выберите формат', f_11:'Индивидуально', f_small:'Мини-группа (2–3)', f_group:'Группа (до 5)',
+        f_goal:'Цель обучения', f_goal_ph:'Чего вы хотите достичь?', g1:'Сдать HSK', g2:'Деловой / профессиональный китайский', g3:'Повседневное общение', g4:'Путешествие в Китай', g5:'Интерес к культуре', g6:'Связь с семьёй / наследием',
+        f_comment:'Комментарий (необязательно)', f_comment_ph:'Вопросы, пожелания или дополнительная информация…', f_submit:'Отправить заявку →', success_title:'Заявка отправлена!', success_sub:'Спасибо! Мы изучим ваши данные и свяжемся с вами в течение 24 часов, чтобы назначить пробное занятие.', footer_text:'© 2025 DaoTalk — Онлайн-школа китайского языка',
+        comment_count:'%n% / 150'
       }
     };
 
@@ -1122,11 +1195,25 @@
     function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
     function buildTeacherCard(t,idx){var nativeBadge=t.native?' <span class="native-badge">'+escapeHtml(STRINGS[currentLang].native_badge||'Native')+'</span>':'';var edu=currentLang==='ru'?(t.edu_ru||t.edu_en):(t.edu_en||t.edu_ru);var exp=currentLang==='ru'?(t.exp_ru||t.exp_en):(t.exp_en||t.exp_ru);var s=STRINGS[currentLang];return '<div class="teacher-card"><div class="teacher-card-inner"><div class="teacher-avatar">'+escapeHtml(t.avatar)+'</div><div class="teacher-header"><div class="teacher-name">'+escapeHtml(t.name)+nativeBadge+'</div><div class="teacher-origin">'+escapeHtml(t.origin)+'</div></div><div class="teacher-own-hsk"><span class="own-hsk-label">'+escapeHtml(s.hsk_cert||'HSK certified')+'</span><span class="own-hsk-badge">'+escapeHtml(t.hsk)+'</span></div><div class="teacher-meta"><div class="teacher-meta-item"><span class="meta-label">'+escapeHtml(s.meta_edu||'Education')+'</span><span class="meta-value">'+escapeHtml(edu)+'</span></div><div class="teacher-meta-item"><span class="meta-label">'+escapeHtml(s.meta_teaches||'Teaches')+'</span><span class="meta-value"><span class="hsk-badge">'+escapeHtml(t.teaches)+'</span></span></div><div class="teacher-meta-item"><span class="meta-label">'+escapeHtml(s.meta_exp||'Experience')+'</span><span class="meta-value">'+escapeHtml(exp)+'</span></div></div></div></div>';}
     function loadTeachers(){var track=document.getElementById('teacherTrack');if(!track)return;var teachers=(PUBLISHED_DATA&&Array.isArray(PUBLISHED_DATA.teachers))?PUBLISHED_DATA.teachers:[];track.innerHTML=teachers.map(function(t,i){return buildTeacherCard(t||{},i);}).join('');}
-    function loadImages(){var images=PUBLISHED_DATA&&PUBLISHED_DATA.images;if(!images)return;document.querySelectorAll('.culture-slide').forEach(function(slide,i){var src=images['slide'+i];if(!src)return;var svg=slide.querySelector('svg');if(!svg)return;var img=document.createElement('img');img.src=src+'?v='+Date.now();img.style.cssText='width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit';svg.parentNode.replaceChild(img,svg);});}
+    function loadImages(){var images=PUBLISHED_DATA&&PUBLISHED_DATA.images;if(!images)return;document.querySelectorAll('.culture-slide').forEach(function(slide,i){var src=images['slide'+i];if(!src)return;var svg=slide.querySelector('svg');if(!svg)return;var img=document.createElement('img');img.src=src+'?v='+Date.now();img.style.cssText='width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;position:absolute;inset:0';svg.parentNode.replaceChild(img,svg);});}
     function applyServerStrings(){if(!PUBLISHED_DATA||!PUBLISHED_DATA.strings)return;['en','ru'].forEach(function(l){var o=PUBLISHED_DATA.strings[l];if(!o||!STRINGS[l])return;Object.keys(o).forEach(function(k){STRINGS[l][k]=o[k];});});}
     async function loadPublishedData(){try{var r=await fetch('api/public.php?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error();PUBLISHED_DATA=await r.json();applyServerStrings();loadImages();loadTeachers();setLang(currentLang);}catch(e){applyStringOverrides();}}
 
     var currentLang = 'en';
+
+    function smoothTo(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function updateCommentCounter() {
+      var el = document.getElementById('comment');
+      var counter = document.getElementById('commentCounter');
+      if (!el || !counter) return;
+      var template = (STRINGS[currentLang] && STRINGS[currentLang].comment_count) || '%n% / 150';
+      counter.textContent = template.replace('%n%', String(el.value.length));
+    }
 
     function setLang(lang) {
       currentLang = lang;
@@ -1142,10 +1229,12 @@
         var key = el.getAttribute('data-i18n-ph');
         if (s[key] !== undefined) el.placeholder = s[key];
       });
+      document.querySelectorAll('#startForm option[data-i18n]').forEach(function(el){ var key=el.getAttribute('data-i18n'); if(s[key]!==undefined) el.textContent=s[key]; });
       loadTeachers(); // re-render teacher cards in correct language
+      updateCommentCounter();
     }
 
-    async function handleFormSubmit(e){e.preventDefault();var formData={name:document.getElementById('fname').value.trim(),email:document.getElementById('email').value.trim(),phone:document.getElementById('phone').value.trim(),contact:document.getElementById('contact').value,level:document.getElementById('level').value,format:document.getElementById('format').value,goal:document.getElementById('goal').value.trim(),comment:document.getElementById('comment').value.trim()};var submit=document.querySelector('#startForm .form-submit');if(submit)submit.disabled=true;try{var r=await fetch('api/requests.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});var d=await r.json().catch(function(){return{};});if(!r.ok||!d.ok)throw new Error(d.error||'Submission failed');document.getElementById('formContent').style.display='none';document.getElementById('formSuccess').classList.add('visible');}catch(err){alert(currentLang==='ru'?'Не удалось отправить заявку. Попробуйте ещё раз.':'We could not submit your request. Please try again.');if(submit)submit.disabled=false;}}
+    async function handleFormSubmit(e){e.preventDefault();var formData={name:document.getElementById('fname').value.trim(),email:document.getElementById('email').value.trim(),phone:document.getElementById('phone').value.trim(),contact:document.getElementById('contact').value,level:document.getElementById('level').value,format:document.getElementById('format').value,goal:document.getElementById('goal').value.trim(),comment:document.getElementById('comment').value.trim().slice(0,150)};var submit=document.querySelector('#startForm .form-submit');if(submit)submit.disabled=true;try{var r=await fetch('api/requests.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});var d=await r.json().catch(function(){return{};});if(!r.ok||!d.ok)throw new Error(d.error||'Submission failed');document.getElementById('formContent').style.display='none';document.getElementById('formSuccess').classList.add('visible');}catch(err){alert(currentLang==='ru'?'Не удалось отправить заявку. Попробуйте ещё раз.':'We could not submit your request. Please try again.');if(submit)submit.disabled=false;}}
 
     // ── Culture image slider ───────────────────────────────────────────────
     var slideIdx = 0, slideTotal = 4, slideTimer;
@@ -1163,8 +1252,21 @@
     }
     slideTimer = setInterval(function() { slideTo(slideIdx + 1); }, 4000);
 
+    // ── Form helpers ────────────────────────────────────────────────────────
+    (function(){
+      var comment=document.getElementById('comment');
+      if(comment){
+        comment.addEventListener('input', function(){
+          if(comment.value.length>150) comment.value=comment.value.slice(0,150);
+          updateCommentCounter();
+        });
+      }
+      updateCommentCounter();
+    })();
+
     // ── Boot: load the published site data; fall back to localStorage only if unavailable ──
     loadPublishedData();
+
 
     // ── Drag-to-scroll teacher carousel ───────────────────────────────────
     (function() {
