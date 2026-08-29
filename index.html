@@ -1080,6 +1080,27 @@
   </footer>
 
   <script>
+    // ── i18n base dictionary ──────────────────────────────────────────────────
+    // Keep a minimal client-side dictionary so dynamic teacher rendering works
+    // even when the database has no custom translations yet. Server-provided
+    // strings are merged on top of this dictionary below.
+    var STRINGS = {
+      en: {
+        native_badge: 'Native',
+        hsk_cert: 'HSK certified',
+        meta_edu: 'Education',
+        meta_teaches: 'Teaches',
+        meta_exp: 'Experience'
+      },
+      ru: {
+        native_badge: 'Носитель языка',
+        hsk_cert: 'Сертификат HSK',
+        meta_edu: 'Образование',
+        meta_teaches: 'Преподаёт',
+        meta_exp: 'Опыт'
+      }
+    };
+
     // ── Merge localStorage fallback overrides into STRINGS ─────────────────────
     // (populated by admin.html — runs before setLang so all keys are present)
     function applyStringOverrides() {
@@ -1100,7 +1121,7 @@
     var CHAR_WATERMARKS = ['師','文','道'];
     function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
     function buildTeacherCard(t,idx){var nativeBadge=t.native?' <span class="native-badge">'+escapeHtml(STRINGS[currentLang].native_badge||'Native')+'</span>':'';var edu=currentLang==='ru'?(t.edu_ru||t.edu_en):(t.edu_en||t.edu_ru);var exp=currentLang==='ru'?(t.exp_ru||t.exp_en):(t.exp_en||t.exp_ru);var s=STRINGS[currentLang];return '<div class="teacher-card"><div class="teacher-card-inner"><div class="teacher-avatar">'+escapeHtml(t.avatar)+'</div><div class="teacher-header"><div class="teacher-name">'+escapeHtml(t.name)+nativeBadge+'</div><div class="teacher-origin">'+escapeHtml(t.origin)+'</div></div><div class="teacher-own-hsk"><span class="own-hsk-label">'+escapeHtml(s.hsk_cert||'HSK certified')+'</span><span class="own-hsk-badge">'+escapeHtml(t.hsk)+'</span></div><div class="teacher-meta"><div class="teacher-meta-item"><span class="meta-label">'+escapeHtml(s.meta_edu||'Education')+'</span><span class="meta-value">'+escapeHtml(edu)+'</span></div><div class="teacher-meta-item"><span class="meta-label">'+escapeHtml(s.meta_teaches||'Teaches')+'</span><span class="meta-value"><span class="hsk-badge">'+escapeHtml(t.teaches)+'</span></span></div><div class="teacher-meta-item"><span class="meta-label">'+escapeHtml(s.meta_exp||'Experience')+'</span><span class="meta-value">'+escapeHtml(exp)+'</span></div></div></div></div>';}
-    function loadTeachers(){if(!PUBLISHED_DATA||!Array.isArray(PUBLISHED_DATA.teachers)||!PUBLISHED_DATA.teachers.length)return;var track=document.getElementById('teacherTrack');if(track)track.innerHTML=PUBLISHED_DATA.teachers.map(buildTeacherCard).join('');}
+    function loadTeachers(){var track=document.getElementById('teacherTrack');if(!track)return;var teachers=(PUBLISHED_DATA&&Array.isArray(PUBLISHED_DATA.teachers))?PUBLISHED_DATA.teachers:[];track.innerHTML=teachers.map(function(t,i){return buildTeacherCard(t||{},i);}).join('');}
     function loadImages(){var images=PUBLISHED_DATA&&PUBLISHED_DATA.images;if(!images)return;document.querySelectorAll('.culture-slide').forEach(function(slide,i){var src=images['slide'+i];if(!src)return;var svg=slide.querySelector('svg');if(!svg)return;var img=document.createElement('img');img.src=src+'?v='+Date.now();img.style.cssText='width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit';svg.parentNode.replaceChild(img,svg);});}
     function applyServerStrings(){if(!PUBLISHED_DATA||!PUBLISHED_DATA.strings)return;['en','ru'].forEach(function(l){var o=PUBLISHED_DATA.strings[l];if(!o||!STRINGS[l])return;Object.keys(o).forEach(function(k){STRINGS[l][k]=o[k];});});}
     async function loadPublishedData(){try{var r=await fetch('api/public.php?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error();PUBLISHED_DATA=await r.json();applyServerStrings();loadImages();loadTeachers();setLang(currentLang);}catch(e){applyStringOverrides();}}
@@ -1112,7 +1133,7 @@
       document.getElementById('htmlRoot').lang = lang === 'ru' ? 'ru' : 'en';
       document.getElementById('btnEN').classList.toggle('active', lang === 'en');
       document.getElementById('btnRU').classList.toggle('active', lang === 'ru');
-      var s = STRINGS[lang];
+      var s = STRINGS[lang] || STRINGS.en || {};
       document.querySelectorAll('[data-i18n]').forEach(function(el) {
         var key = el.getAttribute('data-i18n');
         if (s[key] !== undefined) el.innerHTML = s[key];
