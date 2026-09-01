@@ -72,7 +72,7 @@
       text-shadow: 0 0 12px rgba(212,160,23,0.3);
     }
 
-    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
     nav ul a { text-decoration: none; color: #9ca3af; font-size: 0.88rem; transition: color 0.2s; white-space: nowrap; }
     nav ul a:hover { color: #e8eaf0; }
     @media (max-width: 700px) {
@@ -333,6 +333,18 @@
     .product-perks li { font-size: 0.8rem; color: #9ca3af; display: flex; align-items: flex-start; gap: 0.5rem; }
     .product-perks li::before { content: "✦"; color: #e84343; font-size: 0.65rem; margin-top: 0.2rem; flex-shrink: 0; }
 
+    .product-title { min-height: 2.6rem; display: flex; align-items: center; }
+    .product-capacity { min-height: 1.35rem; display: flex; align-items: center; }
+    .product-desc { flex: 1 1 auto; margin-top: 0.15rem; }
+    .product-perks { flex: 0 0 auto; min-height: 7.1rem; margin-top: 0; }
+    .product-price-block {
+      margin-top: 0.8rem; padding-top: 0.75rem; border-top: 1px solid #1f2330;
+      min-height: 3.5rem; display: flex; flex-direction: column; justify-content: center; text-align: center;
+      position: relative; z-index: 1;
+    }
+    .product-price { margin-top: 0; }
+    .product-price-sub { min-height: 0; margin-top: 0.15rem; }
+
     /* ── Teachers — horizontal drag-to-scroll carousel ── */
     .teachers-section { max-width: 100%; width: 100%; padding: 0 0 3rem; }
     .teachers-inner { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
@@ -356,14 +368,14 @@
 
     .teacher-card {
       background: #13151c; border: 1px solid #2a1a1a; border-radius: 14px;
-      padding: 1.7rem 1.5rem; width: 300px; height: 650px; flex-shrink: 0;
+      padding: 1.7rem 1.5rem; width: 300px; height: 520px; flex-shrink: 0;
       align-self: stretch; display: flex; flex-direction: column;
       position: relative; overflow: hidden;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
       background-image: linear-gradient(145deg, #151820 0%, #13151c 60%, #160e0e 100%);
     }
     @media (max-width: 700px) {
-      .teacher-card { height: 650px; }
+      .teacher-card { height: 520px; }
     }
     .teacher-card:hover { transform: translateY(-4px); border-color: #5a2a1a; box-shadow: 0 8px 32px rgba(232,67,67,0.12); }
     .teacher-card::after {
@@ -700,8 +712,6 @@
           <div class="product-icon">👤</div>
           <div class="product-title" data-i18n="p1_title">1-on-1 Lessons</div>
           <div class="product-capacity" data-i18n="p1_cap">● 1 student · private</div>
-          <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
-          <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           <p class="product-desc" data-i18n="p1_desc">Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.</p>
           <ul class="product-perks">
             <li data-i18n="p1_b1">Fully personalised lesson plan</li>
@@ -709,6 +719,10 @@
             <li data-i18n="p1_b3">Direct feedback on pronunciation and tones</li>
             <li data-i18n="p1_b4">Reschedule anytime with 12 h notice</li>
           </ul>
+          <div class="product-price-block">
+            <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+            <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
+          </div>
         </div>
 
         <div class="product-card featured">
@@ -716,8 +730,6 @@
           <div class="product-icon">👥</div>
           <div class="product-title" data-i18n="p2_title">Small Group</div>
           <div class="product-capacity" data-i18n="p2_cap">● 2–3 students · semi-private</div>
-          <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
-          <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           <p class="product-desc" data-i18n="p2_desc">The sweet spot between personal attention and peer motivation. Practice with a study buddy at a lower cost.</p>
           <ul class="product-perks">
             <li data-i18n="p2_b1">Peer conversation practice built in</li>
@@ -725,14 +737,16 @@
             <li data-i18n="p2_b3">More affordable than private lessons</li>
             <li data-i18n="p2_b4">Great for couples or friends learning together</li>
           </ul>
+          <div class="product-price-block">
+            <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+            <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
+          </div>
         </div>
 
         <div class="product-card">
           <div class="product-icon">👨‍👩‍👧‍👦</div>
           <div class="product-title" data-i18n="p3_title">Group Lessons</div>
           <div class="product-capacity" data-i18n="p3_cap">● up to 5 students · group</div>
-          <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
-          <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           <p class="product-desc" data-i18n="p3_desc">A community classroom feel, online. Best for structured HSK-prep courses and themed cultural sessions.</p>
           <ul class="product-perks">
             <li data-i18n="p3_b1">Fixed weekly schedule — great for routine</li>
@@ -740,6 +754,10 @@
             <li data-i18n="p3_b3">Diverse discussion with multiple learners</li>
             <li data-i18n="p3_b4">Ideal for beginners building confidence</li>
           </ul>
+          <div class="product-price-block">
+            <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+            <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
+          </div>
         </div>
 
       </div>
