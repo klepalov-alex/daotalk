@@ -800,6 +800,47 @@
       }
     }
 
+
+    /* ── Legal consent / footer links ── */
+    .form-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      margin: 0.2rem 0 1rem;
+      color: #9ca3af;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .form-consent input {
+      width: 16px;
+      height: 16px;
+      margin-top: 0.15rem;
+      flex: 0 0 auto;
+      accent-color: #e84343;
+    }
+    .form-consent a,
+    .footer-links a {
+      color: #d4a017;
+      text-decoration: none;
+    }
+    .form-consent a:hover,
+    .footer-links a:hover { text-decoration: underline; }
+    .footer-links {
+      display: inline-flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-left: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+    @media (max-width: 500px) {
+      .footer-links {
+        display: flex;
+        margin: 0.6rem 0 0;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -909,7 +950,7 @@
             <li data-i18n="p2_b4">Great for couples or friends learning together</li>
           </ul>
           <div class="product-price-block">
-            <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+            <div class="product-price" data-i18n="p2_price">$28 / 50 min</div>
             <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           </div>
         </div>
@@ -926,7 +967,7 @@
             <li data-i18n="p3_b4">Ideal for beginners building confidence</li>
           </ul>
           <div class="product-price-block">
-            <div class="product-price" data-i18n="p_price">$35 / 50 min</div>
+            <div class="product-price" data-i18n="p3_price">$25 / 50 min</div>
             <div class="product-price-sub" data-i18n="p_packages">Discounted packages available</div>
           </div>
         </div>
@@ -1264,6 +1305,10 @@
               <label for="comment" data-i18n="f_comment">Comment (optional)</label>
               <textarea id="comment" rows="3" maxlength="150" placeholder="Any questions, requests, or things we should know…" data-i18n-ph="f_comment_ph" aria-describedby="commentCounter"></textarea><div class="comment-counter" id="commentCounter">0 / 150</div>
             </div>
+            <label class="form-consent">
+              <input type="checkbox" id="privacyConsent" required />
+              <span data-i18n="privacy_consent">I consent to the processing of my personal data as described in the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+            </label>
             <button type="submit" class="form-submit" data-i18n="f_submit">Send My Request →</button>
           </form>
         </div>
@@ -1279,8 +1324,12 @@
 
   <footer>
     <span class="footer-char">·</span>
-    <span data-i18n="footer_text">© 2025 DaoTalk — Online Chinese Language School</span>
+    <span data-i18n="footer_text">© 2026 DaoTalk — Online Chinese Language School</span>
     <span class="footer-char">·</span>
+    <span class="footer-links">
+      <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+      <a href="terms.html" data-i18n="footer_terms">Terms of Use</a>
+    </span>
   </footer>
 
   <script>
@@ -1302,7 +1351,7 @@
         wc6_h:'Carefully Selected Tutors', wc6_p:'Learn with experienced tutors carefully selected for their expertise and teaching skills.',
         wc7_h:'All Your Lessons in One File', wc7_p:'Keep notes, materials, homework, and useful links from every lesson together in one file.',
         courses_h2:'Choose Your Format', courses_sub:'Three lesson types designed for different learning goals and budgets.',
-        p1_title:'1-on-1 Lessons', p1_cap:'● 1 student · private', p_price:'$35 / 50 min', p_packages:'Discounted packages available', p1_desc:'Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.',
+        p1_title:'1-on-1 Lessons', p1_cap:'● 1 student · private', p_price:'$35 / 50 min', p2_price:'$28 / 50 min', p3_price:'$25 / 50 min', p_packages:'Discounted packages available', p1_desc:'Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.',
         p1_b1:'Fully personalised lesson plan', p1_b2:'Fastest progress — no waiting for others', p1_b3:'Direct feedback on pronunciation and tones', p1_b4:'Reschedule anytime with 12 h notice',
         popular_badge:'Popular', p2_title:'Small Group', p2_cap:'● 2–3 students · semi-private', p2_desc:'The sweet spot between personal attention and peer motivation. Practice with a study buddy at a lower cost.',
         p2_b1:'Peer conversation practice built in', p2_b2:"Teacher still knows every student's level", p2_b3:'More affordable than private lessons', p2_b4:'Great for couples or friends learning together',
@@ -1320,7 +1369,7 @@
         f_name:'First Name', f_name_ph:'Your name', f_email:'Email', f_phone:'Phone / Messenger number', f_phone_ph:'+1 234 567 8900', f_contact:'Preferred contact', f_call_opt:'📞 Call', f_email_opt:'✉️ Email',
         f_level:'Current Level', f_level_ph:'Select level', f_beginner:'Complete beginner', f_format:'Preferred Format', f_format_ph:'Select format', f_11:'1-on-1 Private', f_small:'Small Group (2–3)', f_group:'Group (up to 5)',
         f_goal:'Learning Goal', f_goal_ph:'What do you want to achieve?', g1:'Pass HSK exam', g2:'Business / professional Chinese', g3:'Everyday conversation', g4:'Travel to China', g5:'Cultural interest', g6:'Connect with family / heritage',
-        f_comment:'Comment (optional)', f_comment_ph:'Any questions, requests, or things we should know…', f_submit:'Send My Request →', success_title:"We've got your request!", success_sub:"Thank you! We'll review your details and reach out within 24 hours to set up your free trial lesson.", footer_text:'© 2025 DaoTalk — Online Chinese Language School',
+        f_comment:'Comment (optional)', f_comment_ph:'Any questions, requests, or things we should know…', privacy_consent:'I consent to the processing of my personal data as described in the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.', f_submit:'Send My Request →', success_title:"We've got your request!", success_sub:"Thank you! We'll review your details and reach out within 24 hours to set up your free trial lesson.", footer_text:'© 2026 DaoTalk — Online Chinese Language School', footer_privacy:'Privacy Policy', footer_terms:'Terms of Use',
         comment_count:'%n% / 150'
       },
       ru: {
@@ -1336,7 +1385,7 @@
         wc6_h:'Тщательно отобранные преподаватели', wc6_p:'Занимайтесь с опытными преподавателями, которых мы отбираем по экспертизе и навыкам преподавания.',
         wc7_h:'Все уроки в одном файле', wc7_p:'Храните заметки, материалы, домашние задания и полезные ссылки со всех занятий в одном файле.',
         courses_h2:'Выберите формат', courses_sub:'Три формата занятий для разных целей и бюджета.',
-        p1_title:'Индивидуальные занятия', p1_cap:'● 1 ученик · индивидуально', p_price:'$35 / 50 минут', p_packages:'Доступны пакеты со скидкой', p1_desc:'Полное внимание вам. Преподаватель адаптирует каждую минуту урока под ваш темп, цели и слабые места.',
+        p1_title:'Индивидуальные занятия', p1_cap:'● 1 ученик · индивидуально', p_price:'$35 / 50 минут', p2_price:'$28 / 50 минут', p3_price:'$25 / 50 минут', p_packages:'Доступны пакеты со скидкой', p1_desc:'Полное внимание вам. Преподаватель адаптирует каждую минуту урока под ваш темп, цели и слабые места.',
         p1_b1:'Полностью индивидуальный план', p1_b2:'Максимально быстрый прогресс — без ожидания других', p1_b3:'Прямая обратная связь по произношению и тонам', p1_b4:'Перенос занятия при уведомлении за 12 часов',
         popular_badge:'Популярно', p2_title:'Мини-группа', p2_cap:'● 2–3 ученика · полуиндивидуально', p2_desc:'Баланс личного внимания и мотивации от группы. Практика с партнёром по обучению по более доступной цене.',
         p2_b1:'Разговорная практика с другими учениками', p2_b2:'Преподаватель знает уровень каждого участника', p2_b3:'Доступнее индивидуальных занятий', p2_b4:'Подходит для пар или друзей',
@@ -1354,7 +1403,7 @@
         f_name:'Имя', f_name_ph:'Ваше имя', f_email:'Email', f_phone:'Телефон / мессенджер', f_phone_ph:'+7 700 123 45 67', f_contact:'Предпочтительный способ связи', f_call_opt:'📞 Звонок', f_email_opt:'✉️ Email',
         f_level:'Текущий уровень', f_level_ph:'Выберите уровень', f_beginner:'Полный новичок', f_format:'Предпочтительный формат', f_format_ph:'Выберите формат', f_11:'Индивидуально', f_small:'Мини-группа (2–3)', f_group:'Группа (до 5)',
         f_goal:'Цель обучения', f_goal_ph:'Чего вы хотите достичь?', g1:'Сдать HSK', g2:'Деловой / профессиональный китайский', g3:'Повседневное общение', g4:'Путешествие в Китай', g5:'Интерес к культуре', g6:'Связь с семьёй / наследием',
-        f_comment:'Комментарий (необязательно)', f_comment_ph:'Вопросы, пожелания или дополнительная информация…', f_submit:'Отправить заявку →', success_title:'Заявка отправлена!', success_sub:'Спасибо! Мы изучим ваши данные и свяжемся с вами в течение 24 часов, чтобы назначить пробное занятие.', footer_text:'© 2025 DaoTalk — Онлайн-школа китайского языка',
+        f_comment:'Комментарий (необязательно)', f_comment_ph:'Вопросы, пожелания или дополнительная информация…', privacy_consent:'Я согласен(на) на обработку моих персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a>.', f_submit:'Отправить заявку →', success_title:'Заявка отправлена!', success_sub:'Спасибо! Мы изучим ваши данные и свяжемся с вами в течение 24 часов, чтобы назначить пробное занятие.', footer_text:'© 2026 DaoTalk — Онлайн-школа китайского языка', footer_privacy:'Политика конфиденциальности', footer_terms:'Условия использования',
         comment_count:'%n% / 150'
       }
     };
