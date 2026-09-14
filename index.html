@@ -368,14 +368,14 @@
 
     .teacher-card {
       background: #13151c; border: 1px solid #2a1a1a; border-radius: 14px;
-      padding: 1.7rem 1.5rem; width: 300px; height: 520px; flex-shrink: 0;
+      padding: 1.7rem 1.5rem; width: 300px; height: 505px; flex-shrink: 0;
       align-self: stretch; display: flex; flex-direction: column;
       position: relative; overflow: hidden;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
       background-image: linear-gradient(145deg, #151820 0%, #13151c 60%, #160e0e 100%);
     }
     @media (max-width: 700px) {
-      .teacher-card { height: 520px; }
+      .teacher-card { height: 505px; }
     }
     .teacher-card:hover { transform: translateY(-4px); border-color: #5a2a1a; box-shadow: 0 8px 32px rgba(232,67,67,0.12); }
     .teacher-card::after {
@@ -627,6 +627,179 @@
       font-family: "Ma Shan Zheng", "Noto Serif SC", serif;
       color: #d4a017; font-size: 1.1rem; opacity: 0.5; margin: 0 0.65rem;
     }
+
+    /* ── Mobile layout fixes ── */
+    @media (max-width: 700px) {
+      html, body { max-width: 100%; overflow-x: hidden; }
+
+      nav {
+        height: 58px;
+        padding: 0 0.75rem;
+        gap: 0.5rem;
+      }
+      nav::before, nav::after { display: none; }
+      nav > div:last-child { gap: 0.4rem !important; min-width: 0; }
+      .lang-switch { flex-shrink: 0; }
+      .lang-btn { padding: 0.22rem 0.42rem; font-size: 0.7rem; }
+      .nav-btn {
+        padding: 0.42rem 0.65rem;
+        font-size: 0.76rem;
+        white-space: nowrap;
+      }
+
+      .hero { padding: 4rem 1rem 3.5rem; }
+      .hero p { font-size: 0.98rem; }
+      .hero-actions { width: 100%; }
+      .hero-actions button { max-width: 100%; }
+
+      .section-divider { padding-left: 1rem; padding-right: 1rem; gap: 0.65rem; }
+      .section-heading { padding-left: 1rem; padding-right: 1rem; }
+
+      .why-track-wrapper {
+        mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+      }
+      .why-card {
+        min-width: min(250px, calc(100vw - 2.5rem));
+        max-width: min(250px, calc(100vw - 2.5rem));
+      }
+
+      .products-section,
+      .about-section,
+      .form-section { padding-left: 1rem; padding-right: 1rem; }
+
+      .product-card { min-height: 0; }
+
+      .teacher-scroll-wrapper {
+        padding: 0.5rem 1rem 1.25rem;
+        scroll-padding-left: 1rem;
+      }
+      .teacher-track { gap: 1rem; }
+      .teacher-card {
+        width: min(300px, calc(100vw - 2rem));
+        height: 505px;
+        padding: 1.45rem 1.25rem;
+      }
+      .teacher-meta-item {
+        grid-template-columns: 82px minmax(0, 1fr);
+        column-gap: 0.65rem;
+      }
+
+      .about-section::before { right: -5rem; }
+      .form-card { padding: 2rem 1.25rem; }
+
+      footer { padding-left: 1rem; padding-right: 1rem; }
+    }
+
+    @media (max-width: 380px) {
+      nav { padding: 0 0.55rem; }
+      .logo-char { font-size: 1.2rem; }
+      .nav-btn { padding: 0.4rem 0.5rem; font-size: 0.72rem; }
+      .lang-btn { padding: 0.2rem 0.35rem; }
+      .teacher-card { width: calc(100vw - 1.5rem); }
+      .teacher-scroll-wrapper { padding-left: 0.75rem; padding-right: 0.75rem; }
+      .form-card { padding: 1.75rem 1rem; }
+    }
+
+
+    /* ── Form mobile stability fixes ── */
+    .form-row,
+    .form-group,
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      min-width: 0;
+    }
+
+    .form-group label {
+      overflow-wrap: anywhere;
+      word-break: normal;
+      line-height: 1.35;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-group select {
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 640px) {
+      .form-section {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+
+      .form-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+        width: 100%;
+      }
+
+      .form-group {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 0.9rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        font-size: 16px;
+        padding: 0.72rem 0.8rem;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+      }
+
+      .form-submit {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .comment-counter {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .form-section {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+
+      .form-card {
+        padding: 1.25rem 0.85rem;
+      }
+
+      .form-card h2 {
+        font-size: 1.3rem;
+      }
+
+      .form-card .form-subtitle {
+        font-size: 0.85rem;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -674,25 +847,23 @@
       </div>
       <div class="why-track-wrapper">
         <div class="why-track" id="whyTrack">
-          <div class="why-card"><div class="why-card-icon">🎯</div><h3 data-i18n="wc1_h">HSK-Aligned Curriculum</h3><p data-i18n="wc1_p">Lessons mapped to all six HSK levels so you always know where you stand.</p></div>
-          <div class="why-card"><div class="why-card-icon">🗣️</div><h3 data-i18n="wc2_h">Speaking from Day One</h3><p data-i18n="wc2_p">Every lesson includes live speaking drills. No grammar lectures without practice.</p></div>
-          <div class="why-card"><div class="why-card-icon">🀄</div><h3 data-i18n="wc3_h">Cultural Context</h3><p data-i18n="wc3_p">Understand idioms, tone, and culture — not just vocabulary lists.</p></div>
-          <div class="why-card"><div class="why-card-icon">📅</div><h3 data-i18n="wc4_h">Flexible Scheduling</h3><p data-i18n="wc4_p">Book sessions any day, any time zone — mornings, evenings, or weekends.</p></div>
-          <div class="why-card"><div class="why-card-icon">💻</div><h3 data-i18n="wc5_h">Learn Anywhere</h3><p data-i18n="wc5_p">All you need is a browser. No app downloads, no commute, no wasted time.</p></div>
-          <div class="why-card"><div class="why-card-icon">🔁</div><h3 data-i18n="wc6_h">Session Recordings</h3><p data-i18n="wc6_p">Every lesson is recorded so you can revisit explanations at your own pace.</p></div>
-          <div class="why-card"><div class="why-card-icon">📊</div><h3 data-i18n="wc7_h">Progress Tracking</h3><p data-i18n="wc7_p">Visual dashboards show your HSK progress, speaking hours, and vocabulary growth.</p></div>
-          <div class="why-card"><div class="why-card-icon">🤝</div><h3 data-i18n="wc8_h">Real Conversation Practice</h3><p data-i18n="wc8_p">Roleplay scenarios, debates, and storytelling — not just Q&amp;A drills.</p></div>
-          <div class="why-card"><div class="why-card-icon">✏️</div><h3 data-i18n="wc9_h">Character Writing</h3><p data-i18n="wc9_p">Optional calligraphy and stroke-order sessions for those who want to write by hand.</p></div>
+          
+          <div class="why-card"><div class="why-card-icon">✏️</div><h3 data-i18n="wc1_h">Character Writing</h3><p data-i18n="wc1_p">Learn characters step by step, with stroke order and writing practice built into your lessons.</p></div>
+          <div class="why-card"><div class="why-card-icon">🎯</div><h3 data-i18n="wc2_h">Learning for Your Goals</h3><p data-i18n="wc2_p">Prepare for HSK, business, travel, or everyday communication with lessons built around your goals.</p></div>
+          <div class="why-card"><div class="why-card-icon">🗣️</div><h3 data-i18n="wc3_h">Speaking from Day One</h3><p data-i18n="wc3_p">Start using Chinese in real conversation from your very first lesson.</p></div>
+          <div class="why-card"><div class="why-card-icon">🀄</div><h3 data-i18n="wc4_h">Cultural Context</h3><p data-i18n="wc4_p">Understand the culture, expressions, and context behind the language — not just vocabulary.</p></div>
+          <div class="why-card"><div class="why-card-icon">💻</div><h3 data-i18n="wc5_h">Learn Anywhere</h3><p data-i18n="wc5_p">Join your lessons from anywhere with a browser and an internet connection.</p></div>
+          <div class="why-card"><div class="why-card-icon">👩‍🏫</div><h3 data-i18n="wc6_h">Carefully Selected Tutors</h3><p data-i18n="wc6_p">Learn with experienced tutors carefully selected for their expertise and teaching skills.</p></div>
+          <div class="why-card"><div class="why-card-icon">📚</div><h3 data-i18n="wc7_h">All Your Lessons in One File</h3><p data-i18n="wc7_p">Keep notes, materials, homework, and useful links from every lesson together in one file.</p></div>
           <!-- Set 2 duplicate for seamless loop -->
-          <div class="why-card"><div class="why-card-icon">🎯</div><h3 data-i18n="wc1_h">HSK-Aligned Curriculum</h3><p data-i18n="wc1_p">Lessons mapped to all six HSK levels so you always know where you stand.</p></div>
-          <div class="why-card"><div class="why-card-icon">🗣️</div><h3 data-i18n="wc2_h">Speaking from Day One</h3><p data-i18n="wc2_p">Every lesson includes live speaking drills. No grammar lectures without practice.</p></div>
-          <div class="why-card"><div class="why-card-icon">🀄</div><h3 data-i18n="wc3_h">Cultural Context</h3><p data-i18n="wc3_p">Understand idioms, tone, and culture — not just vocabulary lists.</p></div>
-          <div class="why-card"><div class="why-card-icon">📅</div><h3 data-i18n="wc4_h">Flexible Scheduling</h3><p data-i18n="wc4_p">Book sessions any day, any time zone — mornings, evenings, or weekends.</p></div>
-          <div class="why-card"><div class="why-card-icon">💻</div><h3 data-i18n="wc5_h">Learn Anywhere</h3><p data-i18n="wc5_p">All you need is a browser. No app downloads, no commute, no wasted time.</p></div>
-          <div class="why-card"><div class="why-card-icon">🔁</div><h3 data-i18n="wc6_h">Session Recordings</h3><p data-i18n="wc6_p">Every lesson is recorded so you can revisit explanations at your own pace.</p></div>
-          <div class="why-card"><div class="why-card-icon">📊</div><h3 data-i18n="wc7_h">Progress Tracking</h3><p data-i18n="wc7_p">Visual dashboards show your HSK progress, speaking hours, and vocabulary growth.</p></div>
-          <div class="why-card"><div class="why-card-icon">🤝</div><h3 data-i18n="wc8_h">Real Conversation Practice</h3><p data-i18n="wc8_p">Roleplay scenarios, debates, and storytelling — not just Q&amp;A drills.</p></div>
-          <div class="why-card"><div class="why-card-icon">✏️</div><h3 data-i18n="wc9_h">Character Writing</h3><p data-i18n="wc9_p">Optional calligraphy and stroke-order sessions for those who want to write by hand.</p></div>
+          <div class="why-card"><div class="why-card-icon">✏️</div><h3 data-i18n="wc1_h">Character Writing</h3><p data-i18n="wc1_p">Learn characters step by step, with stroke order and writing practice built into your lessons.</p></div>
+          <div class="why-card"><div class="why-card-icon">🎯</div><h3 data-i18n="wc2_h">Learning for Your Goals</h3><p data-i18n="wc2_p">Prepare for HSK, business, travel, or everyday communication with lessons built around your goals.</p></div>
+          <div class="why-card"><div class="why-card-icon">🗣️</div><h3 data-i18n="wc3_h">Speaking from Day One</h3><p data-i18n="wc3_p">Start using Chinese in real conversation from your very first lesson.</p></div>
+          <div class="why-card"><div class="why-card-icon">🀄</div><h3 data-i18n="wc4_h">Cultural Context</h3><p data-i18n="wc4_p">Understand the culture, expressions, and context behind the language — not just vocabulary.</p></div>
+          <div class="why-card"><div class="why-card-icon">💻</div><h3 data-i18n="wc5_h">Learn Anywhere</h3><p data-i18n="wc5_p">Join your lessons from anywhere with a browser and an internet connection.</p></div>
+          <div class="why-card"><div class="why-card-icon">👩‍🏫</div><h3 data-i18n="wc6_h">Carefully Selected Tutors</h3><p data-i18n="wc6_p">Learn with experienced tutors carefully selected for their expertise and teaching skills.</p></div>
+          <div class="why-card"><div class="why-card-icon">📚</div><h3 data-i18n="wc7_h">All Your Lessons in One File</h3><p data-i18n="wc7_p">Keep notes, materials, homework, and useful links from every lesson together in one file.</p></div>
+
         </div>
       </div>
     </div>
@@ -1123,15 +1294,13 @@
         hero_badge:'✦ Online Mandarin School', hero_h1:'Speak Chinese<br>with Confidence',
         hero_p:'DaoTalk connects you with certified teachers for live one-on-one and group lessons. From pinyin basics to HSK 6 — learn at your own pace, on your own schedule.', hero_courses_btn:'View Courses',
         why_h2:'Why DaoTalk', why_sub:'The smarter way to learn Mandarin online — built around practice, not passive study.',
-        wc1_h:'HSK-Aligned Curriculum', wc1_p:'Lessons mapped to all six HSK levels so you always know where you stand.',
-        wc2_h:'Speaking from Day One', wc2_p:'Every lesson includes live speaking drills. No grammar lectures without practice.',
-        wc3_h:'Cultural Context', wc3_p:'Understand idioms, tone, and culture — not just vocabulary lists.',
-        wc4_h:'Flexible Scheduling', wc4_p:'Book sessions any day, any time zone — mornings, evenings, or weekends.',
-        wc5_h:'Learn Anywhere', wc5_p:'All you need is a browser. No app downloads, no commute, no wasted time.',
-        wc6_h:'Session Recordings', wc6_p:'Every lesson is recorded so you can revisit explanations at your own pace.',
-        wc7_h:'Progress Tracking', wc7_p:'Visual dashboards show your HSK progress, speaking hours, and vocabulary growth.',
-        wc8_h:'Real Conversation Practice', wc8_p:'Roleplay scenarios, debates, and storytelling — not just Q&A drills.',
-        wc9_h:'Character Writing', wc9_p:'Optional calligraphy and stroke-order sessions for those who want to write by hand.',
+        wc1_h:'Character Writing', wc1_p:'Learn characters step by step, with stroke order and writing practice built into your lessons.',
+        wc2_h:'Learning for Your Goals', wc2_p:'Prepare for HSK, business, travel, or everyday communication with lessons built around your goals.',
+        wc3_h:'Speaking from Day One', wc3_p:'Start using Chinese in real conversation from your very first lesson.',
+        wc4_h:'Cultural Context', wc4_p:'Understand the culture, expressions, and context behind the language — not just vocabulary.',
+        wc5_h:'Learn Anywhere', wc5_p:'Join your lessons from anywhere with a browser and an internet connection.',
+        wc6_h:'Carefully Selected Tutors', wc6_p:'Learn with experienced tutors carefully selected for their expertise and teaching skills.',
+        wc7_h:'All Your Lessons in One File', wc7_p:'Keep notes, materials, homework, and useful links from every lesson together in one file.',
         courses_h2:'Choose Your Format', courses_sub:'Three lesson types designed for different learning goals and budgets.',
         p1_title:'1-on-1 Lessons', p1_cap:'● 1 student · private', p_price:'$35 / 50 min', p_packages:'Discounted packages available', p1_desc:'Total focus on you. The teacher adapts every minute of the lesson to your pace, goals, and weak spots.',
         p1_b1:'Fully personalised lesson plan', p1_b2:'Fastest progress — no waiting for others', p1_b3:'Direct feedback on pronunciation and tones', p1_b4:'Reschedule anytime with 12 h notice',
@@ -1159,15 +1328,13 @@
         hero_badge:'✦ Онлайн-школа китайского языка', hero_h1:'Говорите по-китайски<br>уверенно',
         hero_p:'DaoTalk соединяет вас с сертифицированными преподавателями для индивидуальных и групповых занятий. От основ пиньиня до HSK 6 — учитесь в своём темпе и по удобному расписанию.', hero_courses_btn:'Форматы занятий',
         why_h2:'Почему DaoTalk', why_sub:'Умный способ учить китайский онлайн — с упором на практику, а не пассивное обучение.',
-        wc1_h:'Программа по уровням HSK', wc1_p:'Занятия соответствуют всем шести уровням HSK, поэтому вы всегда понимаете свой прогресс.',
-        wc2_h:'Разговорная практика с первого дня', wc2_p:'На каждом занятии есть живая разговорная практика. Никаких лекций без применения.',
-        wc3_h:'Культурный контекст', wc3_p:'Понимайте идиомы, интонации и культуру, а не только списки слов.',
-        wc4_h:'Гибкое расписание', wc4_p:'Бронируйте занятия в любой день и часовом поясе — утром, вечером или в выходные.',
-        wc5_h:'Учитесь где угодно', wc5_p:'Нужен только браузер. Без приложений, дороги и лишних потерь времени.',
-        wc6_h:'Записи занятий', wc6_p:'Каждый урок записывается, чтобы вы могли повторить объяснения в удобном темпе.',
-        wc7_h:'Отслеживание прогресса', wc7_p:'Наглядные показатели показывают ваш прогресс по HSK, часы разговорной практики и рост словарного запаса.',
-        wc8_h:'Живая разговорная практика', wc8_p:'Ролевые сценарии, дебаты и рассказы — а не только упражнения в формате вопросов и ответов.',
-        wc9_h:'Иероглифы и письмо', wc9_p:'Дополнительные занятия по каллиграфии и порядку черт для тех, кто хочет писать от руки.',
+        wc1_h:'Иероглифы и письмо', wc1_p:'Учитесь писать иероглифы шаг за шагом: порядок черт и практика письма встроены в занятия.',
+        wc2_h:'Обучение под ваши цели', wc2_p:'Подготовка к HSK, китайский для бизнеса, путешествий или повседневного общения — программа строится вокруг ваших целей.',
+        wc3_h:'Разговорная практика с первого дня', wc3_p:'Начинайте использовать китайский в живой речи уже с первого занятия.',
+        wc4_h:'Культурный контекст', wc4_p:'Понимайте культуру, выражения и контекст языка, а не только запоминайте слова.',
+        wc5_h:'Учитесь где угодно', wc5_p:'Подключайтесь к занятиям из любой точки мира — нужен только браузер и интернет.',
+        wc6_h:'Тщательно отобранные преподаватели', wc6_p:'Занимайтесь с опытными преподавателями, которых мы отбираем по экспертизе и навыкам преподавания.',
+        wc7_h:'Все уроки в одном файле', wc7_p:'Храните заметки, материалы, домашние задания и полезные ссылки со всех занятий в одном файле.',
         courses_h2:'Выберите формат', courses_sub:'Три формата занятий для разных целей и бюджета.',
         p1_title:'Индивидуальные занятия', p1_cap:'● 1 ученик · индивидуально', p_price:'$35 / 50 минут', p_packages:'Доступны пакеты со скидкой', p1_desc:'Полное внимание вам. Преподаватель адаптирует каждую минуту урока под ваш темп, цели и слабые места.',
         p1_b1:'Полностью индивидуальный план', p1_b2:'Максимально быстрый прогресс — без ожидания других', p1_b3:'Прямая обратная связь по произношению и тонам', p1_b4:'Перенос занятия при уведомлении за 12 часов',
